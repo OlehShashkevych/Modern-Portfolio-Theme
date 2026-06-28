@@ -43,7 +43,7 @@ $description = $page_for_posts ? get_post_field( 'post_excerpt', $page_for_posts
                             <?php echo wp_trim_words( get_the_excerpt(), 30 ); ?>
                         </div>
                         <span class="link-hover text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900 transition-colors">
-                            <?php echo function_exists('pll__') ? pll__('Read more') : 'Read more'; ?>
+                            <?php echo theme_t('Читати далі', 'Read more', 'Читать далее'); ?>
                         </span>
                     </a>
                 </div>
@@ -63,7 +63,7 @@ $description = $page_for_posts ? get_post_field( 'post_excerpt', $page_for_posts
         ?>
 
     <?php else : ?>
-        <p class="text-gray-500 text-lg"><?php echo function_exists('pll__') ? pll__('Nothing Found') : 'Nothing Found'; ?></p>
+        <p class="text-gray-500 text-lg"><?php echo theme_t('Нічого не знайдено', 'Nothing Found', 'Ничего не найдено'); ?></p>
     <?php endif; ?>
 </div>
 

@@ -10,7 +10,7 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
     <a href="<?php echo esc_url($blog_url); ?>"
       class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[var(--accent)] transition-colors mb-10">
       <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M13 5H1M6 1L1 5L6 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <?php echo function_exists('pll__') ? pll__('All articles') : 'All articles'; ?>
+      <?php echo theme_t('Всі статті', 'All articles', 'Все статьи'); ?>
     </a>
 
     <!-- Headline -->

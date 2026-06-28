@@ -49,7 +49,7 @@ get_header();
                         <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
                     </div>
                     <span class="btn-ghost self-start text-[10px] mt-auto">
-                        <?php echo function_exists('pll__') ? pll__('Read more') : 'Read more'; ?>
+                        <?php echo theme_t('Читати далі', 'Read more', 'Читать далее'); ?>
                         <svg width="10" height="8" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="M1 5H11M6.5 1L11 5L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
                 </div>
@@ -69,7 +69,7 @@ get_header();
         ?>
 
     <?php else : ?>
-        <p class="text-gray-500 text-lg"><?php echo function_exists('pll__') ? pll__('Nothing Found') : 'Nothing Found'; ?></p>
+        <p class="text-gray-500 text-lg"><?php echo theme_t('Нічого не знайдено', 'Nothing Found', 'Ничего не найдено'); ?></p>
     <?php endif; ?>
 </div>
 

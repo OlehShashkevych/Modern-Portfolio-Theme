@@ -9,10 +9,16 @@
         <section id="contact" class="bg-gray-900 p-10 md:p-16" data-reveal="zoom">
             <div class="max-w-xl mb-10">
                 <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-4 text-white" data-reveal="letters">
-                    <?php echo esc_html( carbon_get_theme_option('shashkevych_contact_title') ?: __('Get in touch', 'shashkevych') ); ?>
+                    <?php 
+                        $contact_title = carbon_get_theme_option('shashkevych_contact_title') ?: 'Get in touch';
+                        echo esc_html( function_exists('pll__') ? pll__($contact_title) : $contact_title ); 
+                    ?>
                 </h2>
                 <p class="text-gray-400 text-base leading-relaxed">
-                    <?php echo esc_html( carbon_get_theme_option('shashkevych_contact_text') ?: __('Feel free to contact me', 'shashkevych') ); ?>
+                    <?php 
+                        $contact_text = carbon_get_theme_option('shashkevych_contact_text') ?: 'Feel free to contact me';
+                        echo esc_html( function_exists('pll__') ? pll__($contact_text) : $contact_text ); 
+                    ?>
                 </p>
             </div>
             
@@ -45,7 +51,10 @@
 
     <div class="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 text-center md:text-left">
         <div>
-            <?php echo esc_html( carbon_get_theme_option('shashkevych_footer_text') ?: '© ' . date('Y') . '.' ); ?>
+            <?php 
+                $footer_text = carbon_get_theme_option('shashkevych_footer_text') ?: '© ' . date('Y') . '.';
+                echo esc_html( function_exists('pll__') ? pll__($footer_text) : $footer_text ); 
+            ?>
         </div>
     </div>
 </footer>

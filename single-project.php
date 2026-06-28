@@ -15,7 +15,7 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
     <a href="<?php echo get_post_type_archive_link('project'); ?>"
       class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[var(--accent)] transition-colors mb-10">
       <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true"><path d="M13 5H1M6 1L1 5L6 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <?php echo function_exists('pll__') ? pll__('Back to projects') : 'Back to projects'; ?>
+      <?php echo theme_t('Назад до проектів', 'Back to projects', 'Назад к проектам'); ?>
     </a>
 
     <!-- Cover media -->
@@ -43,21 +43,21 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
     <div class="flex flex-wrap gap-x-8 gap-y-4 mb-3 border-t border-gray-200 pt-5" data-reveal="rise">
       <?php if ( $client ) : ?>
       <div>
-        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5"><?php echo function_exists('pll__') ? pll__('Client') : 'Client'; ?></span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5"><?php echo theme_t('Клієнт', 'Client', 'Клиент'); ?></span>
         <span class="text-sm font-bold text-gray-900"><?php echo esc_html($client); ?></span>
       </div>
       <?php endif; ?>
       
       <?php if ( $role ) : ?>
       <div>
-        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5"><?php echo function_exists('pll__') ? pll__('Role') : 'Role'; ?></span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5"><?php echo theme_t('Роль', 'Role', 'Роль'); ?></span>
         <span class="text-sm font-bold text-gray-900"><?php echo esc_html($role); ?></span>
       </div>
       <?php endif; ?>
       
       <?php if ( $year ) : ?>
       <div>
-        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5"><?php echo function_exists('pll__') ? pll__('Year') : 'Year'; ?></span>
+        <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5"><?php echo theme_t('Рік', 'Year', 'Год'); ?></span>
         <span class="text-sm font-bold text-gray-900"><?php echo esc_html($year); ?></span>
       </div>
       <?php endif; ?>
@@ -67,7 +67,7 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
           <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-0.5">URL</span>
           <a href="<?php echo esc_url($link); ?>" target="_blank" rel="noopener noreferrer"
             class="inline-flex items-center gap-1 text-sm font-bold text-[var(--accent)] hover:text-[var(--accent-dark)] transition-colors">
-            <?php echo function_exists('pll__') ? pll__('Visit project') : 'Visit project'; ?>
+            <?php echo theme_t('Відвідати проект', 'Visit project', 'Посетить проект'); ?>
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M2 8L8 2M8 2H4M8 2V6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>

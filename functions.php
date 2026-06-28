@@ -69,21 +69,21 @@ add_action( 'init', 'shashkevych_register_cpt_projects', 0 );
 // 4. Polylang Strings Registration
 function shashkevych_register_strings() {
     if ( function_exists( 'pll_register_string' ) ) {
-        pll_register_string( 'shashkevych', 'Navigation' );
-        pll_register_string( 'shashkevych', 'Get in touch' );
-        pll_register_string( 'shashkevych', 'Feel free to contact me' );
-        pll_register_string( 'shashkevych', 'View projects' );
-        pll_register_string( 'shashkevych', 'View all' );
-        pll_register_string( 'shashkevych', 'All articles' );
-        pll_register_string( 'shashkevych', 'Read more' );
-        pll_register_string( 'shashkevych', 'Back to projects' );
-        pll_register_string( 'shashkevych', 'Client' );
-        pll_register_string( 'shashkevych', 'Role' );
-        pll_register_string( 'shashkevych', 'Year' );
-        pll_register_string( 'shashkevych', 'Visit project' );
+        // Register Theme Options for translation
+        pll_register_string( 'Theme Options', carbon_get_theme_option('shashkevych_contact_title') ?: 'Get in touch', 'shashkevych', false );
+        pll_register_string( 'Theme Options', carbon_get_theme_option('shashkevych_contact_text') ?: 'Feel free to contact me', 'shashkevych', true );
+        pll_register_string( 'Theme Options', carbon_get_theme_option('shashkevych_footer_text') ?: '© ' . date('Y') . '.', 'shashkevych', true );
     }
 }
 add_action( 'init', 'shashkevych_register_strings' );
+
+// 4.1 Inline Translations Helper
+function theme_t($uk, $en, $ru) {
+    $lang = function_exists('pll_current_language') ? pll_current_language() : 'uk';
+    if ($lang === 'ru') return $ru;
+    if ($lang === 'en') return $en;
+    return $uk;
+}
 
 // 5. Custom Gutenberg Category
 function shashkevych_block_categories( $categories, $post ) {
@@ -244,7 +244,7 @@ function crb_attach_blocks() {
                                 <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
                             </div>
                             <span class="btn-ghost self-start text-[10px] mt-auto">
-                                <?php echo function_exists('pll__') ? pll__('Read more') : 'Read more'; ?>
+                                <?php echo theme_t('Читати далі', 'Read more', 'Читать далее'); ?>
                                 <svg width="10" height="8" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="M1 5H11M6.5 1L11 5L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </span>
                         </div>
