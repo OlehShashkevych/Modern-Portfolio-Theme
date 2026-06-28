@@ -30,6 +30,7 @@
   /* ── Prose ── */
   .prose { line-height: 1.8; color: #374151; }
   .prose p { margin-bottom: 1.25rem; }
+  .prose h2 { font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; font-weight: 800; color: #0f0f10; letter-spacing: -0.02em; }
   .prose h3 { font-size: 1.15rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 700; color: #0f0f10; }
   .prose ul, .prose ol { margin-bottom: 1.25rem; padding-left: 1.5rem; list-style-type: disc; }
   .prose li { margin-bottom: 0.4rem; }

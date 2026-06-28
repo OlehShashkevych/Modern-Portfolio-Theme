@@ -1,53 +1,54 @@
 <?php
 get_header();
 
-$page_for_posts = get_option( 'page_for_posts' );
-$title = $page_for_posts ? get_the_title( $page_for_posts ) : __( 'Blog', 'shashkevych' );
-$description = $page_for_posts ? get_post_field( 'post_excerpt', $page_for_posts ) : '';
+$title = theme_t(
+    'Замітки та Думки', 
+    'Thoughts & Writing', 
+    'Заметки и Мысли'
+);
+
+$description = theme_t(
+    'Огляди архітектури, розбори реального досвіду та практичні поради щодо розробки програмного забезпечення.', 
+    'Architecture reviews, practical lessons from the field, and insights about clean software engineering.', 
+    'Обзоры архитектуры, разборы практического опыта и полезные советы по разработке программного обеспечения.'
+);
 ?>
 
 <div class="max-w-4xl mx-auto my-12 md:my-20">
-    <div class="mb-10 md:mb-16">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.05] tracking-tight mb-4" data-reveal="letters">
+    <div class="mb-3">
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-0 tracking-tight" data-reveal="letters">
             <?php echo esc_html( $title ); ?>
         </h1>
-        <?php if ( $description ) : ?>
-        <div class="text-lg text-gray-500 leading-relaxed max-w-2xl" data-reveal="rise">
-            <?php echo wp_kses_post( wpautop( $description ) ); ?>
-        </div>
-        <?php endif; ?>
     </div>
-
-    <span class="section-line mb-10" data-reveal="line"></span>
+    
+    <span class="section-line mb-6" data-reveal="line"></span>
+    
+    <p class="text-gray-500 text-base md:text-lg max-w-xl leading-relaxed mb-12" data-reveal="rise">
+        <?php echo esc_html( $description ); ?>
+    </p>
 
     <?php if ( have_posts() ) : ?>
-        <div class="flex flex-col border-t border-gray-200">
+        <div class="divide-y divide-gray-200">
             <?php 
-            $i = 1;
+            $i = 0;
             while ( have_posts() ) : the_post(); 
+                $delay = ($i % 5) + 1;
             ?>
-            <article class="py-8 md:py-10 border-b border-gray-200 group flex flex-col md:flex-row gap-6 md:gap-12 transition-colors hover:bg-white" data-reveal="rise" data-delay="<?php echo $i; ?>">
+            <a href="<?php the_permalink(); ?>" class="group flex flex-col md:flex-row md:items-start justify-between gap-4 py-7 hover:bg-white transition-colors duration-500 px-2 -mx-2" data-reveal="rise" data-delay="<?php echo $delay; ?>">
                 
-                <div class="w-full md:w-1/4 shrink-0">
-                    <time datetime="<?php echo get_the_date('c'); ?>" class="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                        <?php echo get_the_date(); ?>
-                    </time>
+                <div class="flex-grow">
+                    <h2 class="text-base font-bold text-gray-900 group-hover:text-[var(--accent)] transition-colors mb-2 leading-snug">
+                        <?php the_title(); ?>
+                    </h2>
+                    <p class="text-sm text-gray-500 leading-relaxed line-clamp-2">
+                        <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
+                    </p>
                 </div>
                 
-                <div class="flex-1">
-                    <a href="<?php the_permalink(); ?>" class="block">
-                        <h2 class="text-2xl font-bold mb-4 leading-snug text-gray-900 group-hover:text-[var(--accent)] transition-colors">
-                            <?php the_title(); ?>
-                        </h2>
-                        <div class="text-gray-500 leading-relaxed mb-4 line-clamp-3">
-                            <?php echo wp_trim_words( get_the_excerpt(), 30 ); ?>
-                        </div>
-                        <span class="link-hover text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-gray-900 transition-colors">
-                            <?php echo theme_t('Читати далі', 'Read more', 'Читать далее'); ?>
-                        </span>
-                    </a>
+                <div class="flex items-center gap-3 shrink-0">
+                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true" class="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--accent)]"><path d="M1 5H11M6.5 1L11 5L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-            </article>
+            </a>
             <?php 
             $i++;
             endwhile; 
@@ -56,8 +57,8 @@ $description = $page_for_posts ? get_post_field( 'post_excerpt', $page_for_posts
 
         <?php
         the_posts_pagination( array(
-            'prev_text' => __( 'Previous', 'shashkevych' ),
-            'next_text' => __( 'Next', 'shashkevych' ),
+            'prev_text' => theme_t('Попередня', 'Previous', 'Предыдущая'),
+            'next_text' => theme_t('Наступна', 'Next', 'Следующая'),
             'class' => 'mt-12 flex justify-center gap-2'
         ) );
         ?>

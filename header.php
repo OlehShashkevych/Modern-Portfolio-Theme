@@ -20,8 +20,8 @@
         wp_nav_menu( array(
             'theme_location' => 'primary',
             'container'      => false,
-            'menu_class'     => '',
-            'items_wrap'     => '%3$s',
+            'menu_class'     => 'list-none m-0 p-0 flex flex-col',
+            'items_wrap'     => '<ul id="%1$s" class="%2$s">%3$s</ul>',
             'fallback_cb'    => false,
         ) );
     }
