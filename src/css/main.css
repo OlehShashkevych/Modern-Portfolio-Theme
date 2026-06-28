@@ -1,0 +1,609 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --accent:       #6366f1;
+    --accent-dark:  #4338ca;
+    --accent-light: #e0e7ff;
+    --ink:          #0f0f10;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #fdfbf6;
+    color: #0f0f10;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    color: #0f0f10;
+  }
+
+  /* ── Prose ── */
+  .prose { line-height: 1.8; color: #374151; }
+  .prose p { margin-bottom: 1.25rem; }
+  .prose h3 { font-size: 1.15rem; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 700; color: #0f0f10; }
+  .prose ul, .prose ol { margin-bottom: 1.25rem; padding-left: 1.5rem; list-style-type: disc; }
+  .prose li { margin-bottom: 0.4rem; }
+  .prose strong { font-weight: 700; color: #0f0f10; }
+  .prose a { color: var(--accent); text-decoration: underline; }
+
+  /* ══════════════════════════════════════
+     BUTTONS  — flat, fill from center
+  ══════════════════════════════════════ */
+
+  /* Primary: white bg + border → violet fill from center */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 2rem;
+    height: 2.875rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent-dark);
+    background: transparent;
+    border: 2px solid var(--accent);
+    border-radius: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.5s ease;
+    z-index: 0;
+  }
+  /* The fill circle — starts at 0 scale from center, expands to cover */
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    border-radius: 0;
+    transform: scale(0);
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: -1;
+  }
+  .btn-primary:hover { color: #ffffff; }
+  .btn-primary:hover::after { transform: scale(1); }
+  .btn-primary:active::after { background: var(--accent-dark); }
+
+  /* Secondary: transparent + border → same fill */
+  .btn-secondary {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 2rem;
+    height: 2.875rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #374151;
+    background: transparent;
+    border: 2px solid #d1d5db;
+    border-radius: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.5s ease, border-color 0.5s ease;
+    z-index: 0;
+  }
+  .btn-secondary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #0f0f10;
+    transform: scale(0);
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: -1;
+  }
+  .btn-secondary:hover { color: #ffffff; border-color: #0f0f10; }
+  .btn-secondary:hover::after { transform: scale(1); }
+
+  /* ══════════════════════════════════════
+     SCROLL-REVEAL — only active when JS ready
+     html.js-ready activates hidden states
+  ══════════════════════════════════════ */
+
+  /* --- Letter wave reveal --- */
+  @keyframes letterWave {
+    0%   { opacity: 0; transform: translateY(0.6em) skewX(-6deg); }
+    60%  { opacity: 1; transform: translateY(-0.08em) skewX(1deg); }
+    100% { opacity: 1; transform: translateY(0) skewX(0deg); }
+  }
+
+  /* Letter wave — words are inline-block spans; a real space text node between
+     them (added by JS join(' ')) provides natural word gaps and correct wrapping */
+  [data-reveal="letters"] {
+    display: block;
+  }
+  [data-reveal="letters"] .word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  html.js-ready [data-reveal="letters"] .char {
+    display: inline-block;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  [data-reveal="letters"].is-visible .char {
+    animation: letterWave 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* --- Clip reveal (kept for subtitles) --- */
+  html.js-ready [data-reveal="clip"] {
+    opacity: 0;
+    transform: translateY(16px);
+    will-change: transform, opacity;
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity   0.5s ease;
+  }
+  [data-reveal="clip"].is-visible {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+  }
+
+  /* --- Skew-rise: cards / items --- */
+  html.js-ready [data-reveal="rise"] {
+    opacity: 0;
+    transform: translateY(48px) skewY(2deg);
+    will-change: transform, opacity;
+    transition:
+      transform   0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity     0.5s ease,
+      background-color 0.5s ease;
+  }
+  [data-reveal="rise"].is-visible {
+    transform: translateY(0) skewY(0deg) !important;
+    opacity: 1 !important;
+  }
+
+  /* --- Slide from left --- */
+  html.js-ready [data-reveal="left"] {
+    opacity: 0;
+    transform: translateX(-60px);
+    will-change: transform, opacity;
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity   0.5s ease;
+  }
+  [data-reveal="left"].is-visible {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+  }
+
+  /* --- Zoom-in subtle --- */
+  html.js-ready [data-reveal="zoom"] {
+    opacity: 0;
+    transform: scale(0.88);
+    will-change: transform, opacity;
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity   0.5s ease;
+  }
+  [data-reveal="zoom"].is-visible {
+    transform: scale(1) !important;
+    opacity: 1 !important;
+  }
+
+  /* Stagger delay helpers */
+  [data-delay="1"] { transition-delay: 0.08s; }
+  [data-delay="2"] { transition-delay: 0.16s; }
+  [data-delay="3"] { transition-delay: 0.24s; }
+  [data-delay="4"] { transition-delay: 0.32s; }
+  [data-delay="5"] { transition-delay: 0.40s; }
+
+  /* ── Horizontal rule — black ── */
+  .section-line {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 1 !important;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .section-line.is-visible { transform: scaleX(1); }
+
+  /* ══════════════════════════════════════
+     HOVER EFFECTS — nav links, cards
+  ══════════════════════════════════════ */
+
+  /* Nav link: animated underline that slides in from left */
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: var(--ink);
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link:hover::after { width: 100%; }
+
+  .nav-link-inverse {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .nav-link-inverse::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: #ffffff;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-link-inverse:hover::after { width: 100%; }
+
+  .btn-inverted {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 2rem;
+    height: 2.875rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #0f0f10;
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.5s ease;
+    z-index: 1;
+  }
+  .btn-inverted::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0f0f10;
+    transform: scale(0);
+    transition: transform 0.5s ease;
+    z-index: -1;
+  }
+  .btn-inverted:hover { color: #ffffff; }
+  .btn-inverted:hover::after { transform: scale(1); }
+  .btn-inverted:active::after { background: #333333; }
+
+  /* ══════════════════════════════════════
+     MARQUEE ANIMATION
+  ══════════════════════════════════════ */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 60s linear infinite;
+  }
+  
+  /*
+   * Card hover: subtle lift — shadow + bg.
+   * transition is declared on the reveal rule above to avoid conflicts.
+   * Here we only set the hover state values.
+   */
+  .card-hover {
+    position: relative;
+  }
+  /* Removed card hover shadow and stark background as per user request */
+  .card-hover:hover {
+    /* bg change handled by utility classes now */
+  }
+  /* btn-ghost inside a hovered card: stays same style */
+  .card-hover:hover .btn-ghost {
+    border-color: var(--ink);
+  }
+
+  /* Ghost button — for section header links ("all projects" etc.) */
+  .btn-ghost {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0 1rem;
+    height: 2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid #d1d5db;
+    border-radius: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.5s ease, border-color 0.5s ease;
+    z-index: 0;
+    white-space: nowrap;
+  }
+  .btn-ghost::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scale(0);
+    transform-origin: center center;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: -1;
+  }
+  .btn-ghost:hover { color: #ffffff; border-color: var(--ink); }
+  .btn-ghost:hover::after { transform: scale(1); }
+
+  /* Inline text link: underline wipe */
+  .link-hover {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .link-hover::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-hover:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* ══════════════════════════════════════
+     TEXT WIPE EFFECT
+  ══════════════════════════════════════ */
+  .text-wipe-hover {
+    background-image: linear-gradient(to right, var(--accent) 50%, var(--ink) 50%);
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: background-position 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .group:hover .text-wipe-hover,
+  .text-wipe-hover:hover {
+    background-position: 0 0;
+  }
+
+  /* ══════════════════════════════════════
+     PAGE TRANSITION CURTAIN
+  ══════════════════════════════════════ */
+
+  #page-curtain {
+    position: fixed;
+    inset: 0;
+    background: #0f0f10;
+    z-index: 9999;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Default: fully visible — covers the screen on every page load */
+    clip-path: inset(0 0 0% 0);
+    transition: clip-path 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  /* Leave: curtain slides OUT downward to reveal the page */
+  #page-curtain.leave {
+    clip-path: inset(0 0 100% 0);
+    pointer-events: none;
+  }
+
+  /* Enter: curtain slides IN from the top to cover screen before nav */
+  #page-curtain.enter-from-top {
+    clip-path: inset(100% 0 0% 0);
+    pointer-events: none;
+    transition: none;
+  }
+  #page-curtain.enter-from-top.covered {
+    clip-path: inset(0 0 0% 0);
+    pointer-events: auto;
+    transition: clip-path 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+
+  #page-curtain-logo {
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.2);
+    user-select: none;
+  }
+  #page-curtain-logo .dot {
+    color: var(--accent);
+  }
+
+  /* ── Mobile burger button ── */
+  .burger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 200;
+  }
+  .burger-btn span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #0f0f10;
+    border-radius: 2px;
+    transform-origin: center;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+  }
+  .burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── Mobile full-screen menu ── */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    background: #fdfbf6;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4rem 2rem 3rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity   0.5s ease;
+  }
+  .mobile-menu.open {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .mobile-menu a {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #0f0f10;
+    text-decoration: none;
+    line-height: 1.15;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      color 0.5s ease,
+      opacity 0.5s ease,
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mobile-menu.open a { opacity: 1; transform: translateY(0); }
+  .mobile-menu.open a:nth-child(1) { transition-delay: 0.07s; }
+  .mobile-menu.open a:nth-child(2) { transition-delay: 0.14s; }
+  .mobile-menu.open a:nth-child(3) { transition-delay: 0.21s; }
+  .mobile-menu.open a:nth-child(4) { transition-delay: 0.28s; }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu-lang {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1.5rem;
+  }
+  .mobile-menu-lang a {
+    font-size: 0.8rem !important;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9ca3af !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: color 0.5s ease !important;
+  }
+  .mobile-menu-lang a:hover,
+  .mobile-menu-lang a.active { color: #0f0f10 !important; }
+
+  @media (max-width: 767px) {
+    .burger-btn { display: flex; }
+    .desktop-nav { display: none !important; }
+  }
+
+  /* ── Language dropdown ── */
+  .lang-dropdown {
+    position: relative;
+  }
+  .lang-dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    border: none;
+    background: none;
+    transition: color 0.5s;
+  }
+  .lang-dropdown-toggle:hover { color: #0f0f10; }
+  .lang-dropdown-toggle svg {
+    transition: transform 0.5s ease;
+  }
+  .lang-dropdown.open .lang-dropdown-toggle svg {
+    transform: rotate(180deg);
+  }
+  .lang-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    min-width: 100px;
+    z-index: 100;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  .lang-dropdown.open .lang-dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .lang-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.5s, background 0.5s;
+  }
+  .lang-dropdown-menu a:hover { color: #0f0f10; background: #f9fafb; }
+  .lang-dropdown-menu a.active { color: var(--accent); }
+}
