@@ -14,7 +14,7 @@ $description = theme_t(
 );
 ?>
 
-<div class="max-w-4xl mx-auto my-12 md:my-20">
+<div class="max-w-4xl mx-auto">
     <div class="mb-3">
         <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-0 tracking-tight" data-reveal="letters">
             <?php echo esc_html( $title ); ?>

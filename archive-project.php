@@ -14,7 +14,7 @@ $subheading = theme_t(
 );
 ?>
 
-<div class="max-w-[1400px] w-full mx-auto px-6 lg:px-10 my-12 md:my-20">
+<div class="w-full">
     <div class="mb-3">
         <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-0 tracking-tight" data-reveal="letters">
             <?php echo esc_html( $heading ); ?>

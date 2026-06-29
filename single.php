@@ -4,7 +4,7 @@ get_header();
 $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
 ?>
 
-<div class="max-w-3xl mx-auto my-12 md:my-20 px-6 lg:px-0">
+<div class="max-w-3xl mx-auto px-6 lg:px-0">
     <!-- Back -->
     <?php $blog_url = get_option('page_for_posts') ? get_permalink(get_option('page_for_posts')) : home_url('/'); ?>
     <a href="<?php echo esc_url($blog_url); ?>"

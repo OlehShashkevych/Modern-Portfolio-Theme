@@ -120,4 +120,5 @@
 </header>
 
 <!-- Main Content -->
-<main class="flex-grow max-w-[1400px] w-full mx-auto px-6 lg:px-10 py-12 md:py-20">
+<?php $main_padding = is_front_page() ? 'py-12 md:py-20' : 'py-6 md:py-10'; ?>
+<main class="flex-grow max-w-[1400px] w-full mx-auto px-6 lg:px-10 <?php echo $main_padding; ?>">

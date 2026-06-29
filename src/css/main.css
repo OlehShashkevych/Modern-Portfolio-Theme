@@ -607,4 +607,8 @@
   }
   .lang-dropdown-menu a:hover { color: #0f0f10; background: #f9fafb; }
   .lang-dropdown-menu a.active { color: var(--accent); }
+
+  main > *:last-child {
+    margin-bottom: 0 !important;
+  }
 }

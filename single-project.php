@@ -9,7 +9,7 @@ $video = carbon_get_the_post_meta('project_video');
 $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
 ?>
 
-<div class="max-w-4xl mx-auto my-12 md:my-20 px-6 lg:px-0">
+<div class="max-w-4xl mx-auto px-6 lg:px-0">
 
     <!-- Back -->
     <a href="<?php echo get_post_type_archive_link('project'); ?>"

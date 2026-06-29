@@ -29,13 +29,17 @@ add_filter( 'nav_menu_link_attributes', 'shashkevych_nav_menu_link_attributes', 
 
 // 2. Enqueue Scripts and Styles
 function shashkevych_enqueue_scripts() {
-    wp_enqueue_style( 'shashkevych-style', get_template_directory_uri() . '/dist/style.css', array(), '1.0.0' );
-    wp_enqueue_script( 'shashkevych-script', get_template_directory_uri() . '/dist/main.js', array(), '1.0.0', true );
+    $css_ver = file_exists( get_template_directory() . '/dist/style.css' ) ? filemtime( get_template_directory() . '/dist/style.css' ) : '1.0.0';
+    $js_ver = file_exists( get_template_directory() . '/dist/main.js' ) ? filemtime( get_template_directory() . '/dist/main.js' ) : '1.0.0';
+
+    wp_enqueue_style( 'shashkevych-style', get_template_directory_uri() . '/dist/style.css', array(), $css_ver );
+    wp_enqueue_script( 'shashkevych-script', get_template_directory_uri() . '/dist/main.js', array(), $js_ver, true );
 }
 add_action( 'wp_enqueue_scripts', 'shashkevych_enqueue_scripts' );
 
 function shashkevych_enqueue_block_editor_assets() {
-    wp_enqueue_style( 'shashkevych-editor-style', get_template_directory_uri() . '/dist/style.css', array(), '1.0.0' );
+    $css_ver = file_exists( get_template_directory() . '/dist/style.css' ) ? filemtime( get_template_directory() . '/dist/style.css' ) : '1.0.0';
+    wp_enqueue_style( 'shashkevych-editor-style', get_template_directory_uri() . '/dist/style.css', array(), $css_ver );
 }
 add_action( 'enqueue_block_editor_assets', 'shashkevych_enqueue_block_editor_assets' );
 
@@ -52,7 +56,7 @@ function shashkevych_register_cpt_projects() {
     $args = array(
         'label'                 => __( 'Project', 'shashkevych' ),
         'labels'                => $labels,
-        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+        'supports'              => array( 'title', 'editor', 'thumbnail', 'excerpt', 'page-attributes' ),
         'public'                => true,
         'show_ui'               => true,
         'show_in_menu'          => true,
@@ -65,6 +69,14 @@ function shashkevych_register_cpt_projects() {
     register_post_type( 'project', $args );
 }
 add_action( 'init', 'shashkevych_register_cpt_projects', 0 );
+
+function shashkevych_project_archive_order( $query ) {
+    if ( ! is_admin() && $query->is_main_query() && is_post_type_archive( 'project' ) ) {
+        $query->set( 'orderby', 'menu_order' );
+        $query->set( 'order', 'ASC' );
+    }
+}
+add_action( 'pre_get_posts', 'shashkevych_project_archive_order' );
 
 // 4. Polylang Strings Registration
 function shashkevych_register_strings() {
@@ -190,14 +202,32 @@ function crb_attach_blocks() {
             Field::make( 'text', 'title', __( 'Section Title' ) )->set_default_value('Selected Projects'),
             Field::make( 'text', 'link_text', __( 'All Projects Link Text' ) )->set_default_value('View all'),
             Field::make( 'text', 'link_url', __( 'All Projects URL' ) ),
+            Field::make( 'association', 'selected_projects', __( 'Selected Projects' ) )
+                ->set_types( array(
+                    array(
+                        'type'      => 'post',
+                        'post_type' => 'project',
+                    )
+                ) ),
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
-            $projects = new WP_Query(array(
-                'post_type' => 'project',
-                'posts_per_page' => 3,
-                'orderby' => 'date',
-                'order' => 'DESC'
-            ));
+            $selected = $fields['selected_projects'];
+            if ( ! empty( $selected ) ) {
+                $project_ids = wp_list_pluck( $selected, 'id' );
+                $projects = new WP_Query(array(
+                    'post_type'      => 'project',
+                    'post__in'       => $project_ids,
+                    'orderby'        => 'post__in',
+                    'posts_per_page' => -1,
+                ));
+            } else {
+                $projects = new WP_Query(array(
+                    'post_type' => 'project',
+                    'posts_per_page' => 3,
+                    'orderby' => 'menu_order',
+                    'order' => 'ASC'
+                ));
+            }
             ?>
             <section class="mb-24 md:mb-32">
                 <div class="flex items-end justify-between mb-3">
@@ -316,14 +346,32 @@ function crb_attach_blocks() {
             Field::make( 'text', 'title', __( 'Section Title' ) ),
             Field::make( 'text', 'link_text', __( 'All Writing Link Text' ) ),
             Field::make( 'text', 'link_url', __( 'All Writing URL' ) ),
+            Field::make( 'association', 'selected_posts', __( 'Selected Posts' ) )
+                ->set_types( array(
+                    array(
+                        'type'      => 'post',
+                        'post_type' => 'post',
+                    )
+                ) ),
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
-            $posts = new WP_Query(array(
-                'post_type' => 'post',
-                'posts_per_page' => 3,
-                'orderby' => 'date',
-                'order' => 'DESC'
-            ));
+            $selected = $fields['selected_posts'];
+            if ( ! empty( $selected ) ) {
+                $post_ids = wp_list_pluck( $selected, 'id' );
+                $posts = new WP_Query(array(
+                    'post_type'      => 'post',
+                    'post__in'       => $post_ids,
+                    'orderby'        => 'post__in',
+                    'posts_per_page' => -1,
+                ));
+            } else {
+                $posts = new WP_Query(array(
+                    'post_type' => 'post',
+                    'posts_per_page' => 3,
+                    'orderby' => 'date',
+                    'order' => 'DESC'
+                ));
+            }
             ?>
             <section class="mb-24 md:mb-32">
                 <div class="flex items-end justify-between mb-3">
