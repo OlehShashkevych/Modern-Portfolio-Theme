@@ -596,11 +596,10 @@ import { Navigation } from 'swiper/modules';
       for (let i = 0; i < particlesCount; i++) {
         const i3 = i * 3;
         
-        // Random scattered original positions (relative to their side)
-        const isLeft = i < (particlesCount / 2);
-        const xOffset = (Math.random() - 0.5) * (widthWorld / 2) * 0.8;
-        const yOffset = (Math.random() - 0.5) * heightWorld * 0.8;
-        const zOffset = (Math.random() - 0.5) * 2;
+        // Random scattered original positions across the whole container
+        const xOffset = (Math.random() - 0.5) * widthWorld * 1.5;
+        const yOffset = (Math.random() - 0.5) * heightWorld * 1.5;
+        const zOffset = (Math.random() - 0.5) * 4;
 
         positions[i3] = xOffset;
         positions[i3+1] = yOffset;
@@ -641,30 +640,47 @@ import { Navigation } from 'swiper/modules';
       const points = new THREE.Points(geometry, material);
       scene.add(points);
 
-      const half = particlesCount / 2;
-
-      // Pre-calculate 2D shape targets
+      // Pre-calculate 2D shape targets for all particles
       const ringTargets = [];
-      for (let i = 0; i < half; i++) {
-        // 2D Ring
-        const angle = (i / half) * Math.PI * 2;
-        const radius = 1.2 + (Math.random() * 0.2 - 0.1); // slight noise
+      for (let i = 0; i < particlesCount; i++) {
+        // 2D Ring (Thicker)
+        const angle = (i / particlesCount) * Math.PI * 2;
+        const radius = 1.2 + (Math.random() * 0.4 - 0.2); // Thicker ring noise
         ringTargets.push({
           x: Math.cos(angle) * radius,
           y: Math.sin(angle) * radius
         });
       }
 
-      const lotusTargets = [];
-      for (let i = 0; i < half; i++) {
-        // 2D Lotus (Rose curve)
-        const angle = (i / half) * Math.PI * 20; // wrap around multiple times for density
-        const petalFactor = Math.abs(Math.sin(3 * angle)); // 6 petals
-        const radius = 0.4 + 1.2 * Math.pow(petalFactor, 1.5) + (Math.random() * 0.1);
-        lotusTargets.push({
-          x: Math.cos(angle) * radius,
-          y: Math.sin(angle) * radius
-        });
+      const lightningTargets = [];
+      for (let i = 0; i < particlesCount; i++) {
+        // 2D Lightning Bolt
+        const part = Math.random();
+        const t = Math.random();
+        let x, y;
+        
+        if (part > 0.5) {
+          // Top stroke: from top right down to center left
+          const baseX = 0.4 + t * (-0.2 - 0.4);
+          const baseY = 1.2 + t * (0.0 - 1.2);
+          const w = (Math.random() - 0.5) * 0.6;
+          x = baseX + w;
+          y = baseY;
+        } else {
+          // Bottom stroke: from center right down to bottom left
+          const baseX = 0.2 + t * (-0.4 - 0.2);
+          const baseY = 0.0 + t * (-1.2 - 0.0);
+          const taper = 1.0 - Math.pow(t, 0.8);
+          const w = (Math.random() - 0.5) * 0.6 * taper;
+          x = baseX + w;
+          y = baseY;
+        }
+        
+        // Minor scatter
+        x += (Math.random() - 0.5) * 0.05;
+        y += (Math.random() - 0.5) * 0.05;
+
+        lightningTargets.push({ x, y });
       }
 
       let activeState = 'none'; // 'none', 'left', 'right'
@@ -682,6 +698,15 @@ import { Navigation } from 'swiper/modules';
         rightCol.addEventListener('mouseleave', () => { if(activeState === 'right') activeState = 'none'; });
       }
 
+      function getCenterInWorld(el) {
+        if (!el || !container) return 0;
+        const rect = el.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const localX = (rect.left - containerRect.left) + rect.width / 2;
+        const ndcX = (localX / containerRect.width) * 2 - 1;
+        return ndcX * (widthWorld / 2);
+      }
+
       function animate() {
         requestAnimationFrame(animate);
         
@@ -690,18 +715,16 @@ import { Navigation } from 'swiper/modules';
         
         shapeRotation += 0.01;
         widthWorld = heightWorld * camera.aspect;
-        const centerXLeft = -widthWorld / 4;
-        const centerXRight = widthWorld / 4;
+        
+        const centerXLeft = getCenterInWorld(leftCol);
+        const centerXRight = getCenterInWorld(rightCol);
 
         for (let i = 0; i < particlesCount; i++) {
-          const isLeft = i < half;
           const i3 = i * 3;
           let tx, ty, tz, tc;
-          
-          const centerX = isLeft ? centerXLeft : centerXRight;
 
-          if (activeState === 'left' && isLeft) {
-            // Apply 2D Z-rotation to Ring target
+          if (activeState === 'left') {
+            // All particles form 2D Z-rotation Ring target
             const st = ringTargets[i];
             const cos = Math.cos(shapeRotation);
             const sin = Math.sin(shapeRotation);
@@ -709,18 +732,16 @@ import { Navigation } from 'swiper/modules';
             ty = st.x * sin + st.y * cos;
             tz = 0;
             tc = colorLeft;
-          } else if (activeState === 'right' && !isLeft) {
-            // Apply 2D Z-rotation to Lotus target (slower spin)
-            const tt = lotusTargets[i - half];
-            const cos = Math.cos(-shapeRotation * 0.5);
-            const sin = Math.sin(-shapeRotation * 0.5);
-            tx = tt.x * cos - tt.y * sin + centerXRight;
-            ty = tt.x * sin + tt.y * cos;
+          } else if (activeState === 'right') {
+            // All particles form a non-rotating Lightning target
+            const lt = lightningTargets[i];
+            tx = lt.x + Math.sin(shapeRotation * 2 + i) * 0.05 + centerXRight;
+            ty = lt.y + Math.cos(shapeRotation * 2 + i) * 0.05;
             tz = 0;
             tc = colorRight;
           } else {
-            // Back to original floating positions (centered on their side)
-            tx = originalPositions[i3] + Math.sin(shapeRotation * 0.5 + i) * 0.2 + centerX;
+            // Back to original floating positions (spread across full container)
+            tx = originalPositions[i3] + Math.sin(shapeRotation * 0.5 + i) * 0.2;
             ty = originalPositions[i3+1] + Math.cos(shapeRotation * 0.3 + i) * 0.2;
             tz = originalPositions[i3+2];
             tc = colorBase;
