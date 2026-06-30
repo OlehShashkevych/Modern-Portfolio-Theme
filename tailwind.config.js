@@ -10,12 +10,12 @@ module.exports = {
     extend: {
       colors: {
         ag: {
-          black: '#000000',
-          dark: '#0a0a0a',
-          darkgray: '#171717',
-          light: '#f9f9f9',
+          bg: '#ffffff',       // pure white main background
+          black: '#121317',    // dark black with a hint of blue
+          dark: '#1c1e26',     // slightly lighter dark
+          light: '#ffffff',    // pure white
           white: '#ffffff',
-          accent: '#0d6efd', // Google blue-ish
+          accent: 'var(--ag-accent)',   // map to css variable
         }
       },
       fontFamily: {

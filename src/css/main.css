@@ -8,18 +8,19 @@
     --accent-dark:  #4338ca;
     --accent-light: #e0e7ff;
     --ink:          #0f0f10;
-    --ag-black: #000000;
-    --ag-dark: #0a0a0a;
-    --ag-light: #f9f9f9;
+    --ag-black: #121317;
+    --ag-dark: #1c1e26;
+    --ag-light: #ffffff;
     --ag-white: #ffffff;
-    --ag-accent: #0d6efd;
+    --ag-bg: #ffffff;
+    --ag-accent: #5c55e9; /* a vibrant violet-blue single accent */
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    background-color: var(--ag-black);
-    color: var(--ag-white);
+    background-color: var(--ag-bg);
+    color: var(--ag-black);
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -83,28 +84,13 @@
   .btn-primary:hover { color: #ffffff; }
   .btn-primary:hover::after { transform: scale(1); }
   .btn-primary:active::after { background: var(--accent-dark); }
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 bg-ag-black text-ag-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-ag-accent transition-colors duration-300;
+  }
 
   /* Secondary: transparent + border → same fill */
   .btn-secondary {
-    position: relative;
-    overflow: hidden;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0 2rem;
-    height: 2.875rem;
-    font-size: 0.875rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: #374151;
-    background: transparent;
-    border: 2px solid #d1d5db;
-    border-radius: 0;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.5s ease, border-color 0.5s ease;
-    z-index: 0;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-ag-black text-xs font-bold uppercase tracking-widest rounded-full hover:bg-gray-300 transition-colors duration-300;
   }
   .btn-secondary::after {
     content: "";
@@ -280,7 +266,7 @@
     color: #0f0f10;
     background: #ffffff;
     border: 2px solid #ffffff;
-    border-radius: 0;
+    border-radius: 9999px;
     cursor: pointer;
     text-decoration: none;
     transition: color 0.5s ease;
@@ -347,7 +333,7 @@
     color: var(--ink);
     background: transparent;
     border: 1.5px solid #d1d5db;
-    border-radius: 0;
+    border-radius: 9999px;
     cursor: pointer;
     text-decoration: none;
     transition: color 0.5s ease, border-color 0.5s ease;
@@ -393,19 +379,130 @@
 
   /* ══════════════════════════════════════
      TEXT WIPE EFFECT
-  ══════════════════════════════════════ */
+  ══════════════════════════════════════  /* Text wipe hover effect */
   .text-wipe-hover {
-    background-image: linear-gradient(to right, var(--accent) 50%, var(--ink) 50%);
+    background: linear-gradient(to right, var(--ag-accent) 50%, currentColor 50%);
     background-size: 200% 100%;
     background-position: 100% 0;
     -webkit-background-clip: text;
-    background-clip: text;
     -webkit-text-fill-color: transparent;
-    transition: background-position 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-position 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .group:hover .text-wipe-hover,
-  .text-wipe-hover:hover {
+  .group:hover .text-wipe-hover {
     background-position: 0 0;
+  }
+
+  /* Animated Button (Curtain, Text up, Icon right) */
+  .btn-animated {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.5rem;
+    height: 38px;
+    background-color: var(--ag-black);
+    color: var(--ag-white);
+    font-size: 16px;
+    font-weight: 450;
+    border-radius: 9999px;
+    text-decoration: none;
+    z-index: 1;
+  }
+  
+  .btn-animated-ghost {
+    background-color: var(--ag-white);
+    color: var(--ag-black);
+    border: 1px solid var(--ag-black);
+  }
+  
+  .btn-animated-ghost:hover {
+    color: var(--ag-white);
+    border-color: var(--ag-accent);
+  }
+  
+  .btn-animated-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--ag-accent);
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: -1;
+  }
+  
+  .breakout {
+    width: 100vw !important;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+  }
+  
+  .lang-menu-container {
+    clip-path: circle(0% at 90% 10%);
+    opacity: 0;
+    visibility: hidden;
+    transition: clip-path 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.4s ease, visibility 0.4s;
+  }
+  
+  .lang-menu-container.lang-menu-active {
+    clip-path: circle(150% at 90% 10%);
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .btn-animated:hover .btn-animated-bg {
+    transform: translateY(0);
+  }
+
+  .btn-animated-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-animated-text {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    height: 1.2em;
+    line-height: 1.2em;
+  }
+  
+  .btn-animated-text span {
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  
+  .btn-animated-text span:nth-child(2) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+  
+  .btn-animated:hover .btn-animated-text span {
+    transform: translateY(-100%);
+  }
+
+  .btn-animated-icon {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    width: 12px;
+    height: 12px;
+    margin-top: 2px;
+  }
+  
+  .btn-animated-icon svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  
+  .btn-animated:hover .btn-animated-icon svg {
+    transform: translateY(-100%);
   }
 
   /* ══════════════════════════════════════
@@ -478,7 +575,7 @@
     width: 22px;
     height: 2px;
     background: #0f0f10;
-    border-radius: 2px;
+    border-radius: 9999px;
     transform-origin: center;
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
   }

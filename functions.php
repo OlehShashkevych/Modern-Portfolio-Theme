@@ -21,7 +21,7 @@ add_action( 'after_setup_theme', 'shashkevych_setup' );
 // Filter nav menu items to add classes
 function shashkevych_nav_menu_link_attributes( $atts, $item, $args ) {
     if ( $args->theme_location === 'primary' ) {
-        $atts['class'] = 'nav-link text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors';
+        $atts['class'] = 'nav-link text-[15px] font-normal leading-[1.5] text-[#45474D] hover:text-ag-black transition-colors';
     }
     return $atts;
 }
@@ -163,34 +163,42 @@ function crb_attach_blocks() {
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
             ?>
-            <section class="mb-24 md:mb-32 pt-8 flex flex-col md:flex-row items-center gap-12 md:gap-16">
-                <div class="flex-1 max-w-4xl">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-ag-black leading-[1.05] mb-7 tracking-tight" data-reveal="letters">
+            <section class="breakout relative min-h-[70vh] flex flex-col items-center justify-center pt-32 pb-24 text-center overflow-hidden mb-24 md:mb-32">
+                <!-- Particles Container -->
+                <div id="hero-particles" class="absolute inset-0 z-0 pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-4xl mx-auto px-6">
+                    <h1 class="text-5xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.2] mb-6 tracking-tight" data-reveal="letters">
                         <?php echo esc_html( $fields['heading'] ); ?>
                     </h1>
-                    <p class="text-lg md:text-xl text-gray-500 leading-relaxed max-w-2xl mb-10" data-reveal="rise">
+                    <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise" data-delay="1">
                         <?php echo esc_html( $fields['subheading'] ); ?>
                     </p>
-                    <div class="flex flex-wrap gap-4" data-reveal="rise" data-delay="1">
+                    <div class="flex flex-wrap items-center justify-center gap-4" data-reveal="rise" data-delay="2">
                         <?php if ( $fields['btn_primary_text'] && $fields['btn_primary_url'] ) : ?>
-                        <a href="<?php echo esc_url( $fields['btn_primary_url'] ); ?>" class="btn-primary">
-                            <?php echo esc_html( $fields['btn_primary_text'] ); ?>
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7H12M7 2L12 7L7 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <a href="<?php echo esc_url( $fields['btn_primary_url'] ); ?>" class="btn-animated">
+                            <div class="btn-animated-bg"></div>
+                            <div class="btn-animated-content">
+                                <div class="btn-animated-text">
+                                    <span><?php echo esc_html( $fields['btn_primary_text'] ); ?></span>
+                                    <span><?php echo esc_html( $fields['btn_primary_text'] ); ?></span>
+                                </div>
+                            </div>
                         </a>
                         <?php endif; ?>
                         <?php if ( $fields['btn_secondary_text'] && $fields['btn_secondary_url'] ) : ?>
-                        <a href="<?php echo esc_url( $fields['btn_secondary_url'] ); ?>" class="btn-secondary">
-                            <?php echo esc_html( $fields['btn_secondary_text'] ); ?>
+                        <a href="<?php echo esc_url( $fields['btn_secondary_url'] ); ?>" class="btn-animated btn-animated-ghost">
+                            <div class="btn-animated-bg"></div>
+                            <div class="btn-animated-content">
+                                <div class="btn-animated-text">
+                                    <span><?php echo esc_html( $fields['btn_secondary_text'] ); ?></span>
+                                    <span><?php echo esc_html( $fields['btn_secondary_text'] ); ?></span>
+                                </div>
+                            </div>
                         </a>
                         <?php endif; ?>
                     </div>
                 </div>
-                <?php if ( $fields['image'] ) : ?>
-                <div class="w-56 h-56 md:w-72 md:h-72 lg:w-96 lg:h-96 shrink-0 relative" data-reveal="zoom">
-                    <div class="absolute inset-0 bg-gray-200 translate-x-3 translate-y-3 opacity-50"></div>
-                    <img src="<?php echo esc_url( $fields['image'] ); ?>" alt="" class="w-full h-full object-cover relative z-10" />
-                </div>
-                <?php endif; ?>
             </section>
             <?php
         } );
