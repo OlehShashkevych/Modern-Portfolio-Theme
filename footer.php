@@ -24,7 +24,7 @@
             
             <div class="flex flex-wrap gap-x-16 gap-y-6">
                 <div class="flex flex-col gap-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Contact</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2"><?php echo theme_t('Контакти', 'Contact', 'Контакты'); ?></span>
                     <?php $email = carbon_get_theme_option('shashkevych_email'); ?>
                     <?php if ($email) : ?>
                     <a href="mailto:<?php echo esc_attr($email); ?>" class="hover:text-ag-accent transition-colors">
@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="flex flex-col gap-3">
-                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Social</span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2"><?php echo theme_t('Мережі', 'Social', 'Соцсети'); ?></span>
                     <?php 
                     $socials = carbon_get_theme_option('shashkevych_social_links'); 
                     if ( ! empty( $socials ) ) :

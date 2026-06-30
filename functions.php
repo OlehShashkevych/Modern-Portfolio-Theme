@@ -163,7 +163,7 @@ function crb_attach_blocks() {
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
             ?>
-            <section class="breakout relative min-h-[70vh] flex flex-col items-center justify-center pt-32 pb-24 text-center overflow-hidden mb-24 md:mb-32">
+            <section class="breakout relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 text-center overflow-hidden mb-12">
                 <!-- Particles Container -->
                 <div id="hero-particles" class="absolute inset-0 z-0 pointer-events-none"></div>
 
@@ -174,9 +174,9 @@ function crb_attach_blocks() {
                     <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise" data-delay="1">
                         <?php echo esc_html( $fields['subheading'] ); ?>
                     </p>
-                    <div class="flex flex-wrap items-center justify-center gap-4" data-reveal="rise" data-delay="2">
+                    <div class="flex flex-wrap items-center justify-center gap-4">
                         <?php if ( $fields['btn_primary_text'] && $fields['btn_primary_url'] ) : ?>
-                        <a href="<?php echo esc_url( $fields['btn_primary_url'] ); ?>" class="btn-animated">
+                        <a href="<?php echo esc_url( $fields['btn_primary_url'] ); ?>" class="btn-animated" data-reveal="rise" data-delay="2">
                             <div class="btn-animated-bg"></div>
                             <div class="btn-animated-content">
                                 <div class="btn-animated-text">
@@ -187,7 +187,7 @@ function crb_attach_blocks() {
                         </a>
                         <?php endif; ?>
                         <?php if ( $fields['btn_secondary_text'] && $fields['btn_secondary_url'] ) : ?>
-                        <a href="<?php echo esc_url( $fields['btn_secondary_url'] ); ?>" class="btn-animated btn-animated-ghost">
+                        <a href="<?php echo esc_url( $fields['btn_secondary_url'] ); ?>" class="btn-animated btn-animated-ghost" data-reveal="rise" data-delay="3">
                             <div class="btn-animated-bg"></div>
                             <div class="btn-animated-content">
                                 <div class="btn-animated-text">
@@ -237,62 +237,129 @@ function crb_attach_blocks() {
                 ));
             }
             ?>
-            <section class="mb-24 md:mb-32">
-                <div class="flex items-end justify-between mb-3">
-                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-ag-black" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+            <section class="breakout py-12 mb-16 overflow-hidden bg-white relative">
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-12">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <h2 class="text-[36px] font-[450] text-ag-black tracking-tight m-0" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+                        <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
+                        <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-animated btn-animated-ghost hidden md:inline-flex" data-reveal="rise" data-delay="1">
+                            <div class="btn-animated-bg"></div>
+                            <div class="btn-animated-content">
+                                <div class="btn-animated-text">
+                                    <span><?php echo esc_html($fields['link_text']); ?></span>
+                                    <span><?php echo esc_html($fields['link_text']); ?></span>
+                                </div>
+                                <div class="btn-animated-icon">
+                                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" class="opacity-80"><path d="M1 7H13M8 2L13 7L8 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" class="opacity-80"><path d="M1 7H13M8 2L13 7L8 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="relative w-full overflow-hidden" data-reveal="rise">
+                    <div class="swiper featured-projects-swiper !pl-4 lg:!pl-[calc(50vw-700px)]">
+                        <div class="swiper-wrapper">
+                            <?php 
+                            $i = 1;
+                            if ( $projects->have_posts() ) : 
+                                while ( $projects->have_posts() ) : $projects->the_post(); 
+                                    $client = carbon_get_the_post_meta('project_client');
+                                    $year = carbon_get_the_post_meta('project_year');
+                                    $video = carbon_get_the_post_meta('project_video');
+                                    $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
+                            ?>
+                            <div class="swiper-slide w-[85vw] md:w-[70vw] lg:w-[900px] shrink-0 pr-4 md:pr-10 box-border h-auto"
+                                 data-client="<?php echo esc_attr($client); ?>"
+                                 data-year="<?php echo esc_attr($year); ?>"
+                                 data-title="<?php echo esc_attr(get_the_title()); ?>"
+                                 data-excerpt="<?php echo esc_attr(wp_trim_words( get_the_excerpt(), 25 )); ?>"
+                                 data-url="<?php the_permalink(); ?>"
+                            >
+                                <div class="card-hover group flex flex-col transition-all h-full">
+                                    <div class="project-image-wrapper relative aspect-[16/10] bg-ag-light rounded-[32px] overflow-hidden cursor-pointer border border-black" data-project-url="<?php the_permalink(); ?>">
+                                        <?php if ( $video ) : ?>
+                                        <iframe src="<?php echo esc_url($video); ?>" class="w-full h-full pointer-events-none object-cover" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+                                        <?php elseif ( $thumbnail ) : ?>
+                                        <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover" loading="lazy" />
+                                        <?php else : ?>
+                                        <div class="w-full h-full flex items-center justify-center bg-ag-light">
+                                            <span class="text-6xl font-black text-gray-200 select-none"><?php echo substr(get_the_title(), 0, 1); ?></span>
+                                        </div>
+                                        <?php endif; ?>
+                                        
+                                        <!-- Custom Cursor Button -->
+                                        <div class="watch-case-btn absolute top-0 left-0 w-[150px] h-[52px] bg-white text-ag-black font-semibold text-[15px] flex items-center justify-center gap-2 rounded-full pointer-events-none z-20 transition-transform duration-300 shadow-lg scale-0 opacity-0" style="margin-top: -26px; margin-left: -75px;">
+                                            <svg width="12" height="14" viewBox="0 0 10 12" fill="currentColor"><path d="M0 11.4137V0.586267C0 0.207869 0.403487 -0.0341777 0.729112 0.148154L10.3734 5.56189C10.7099 5.75073 10.7099 6.24927 10.3734 6.43811L0.729113 11.8518C0.403488 12.0342 0 11.7921 0 11.4137Z"/></svg>
+                                            <?php echo theme_t('Дивитись кейс', 'Watch case', 'Смотреть кейс'); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php 
+                                $i++;
+                                endwhile; 
+                                wp_reset_postdata();
+                            endif; 
+                            ?>
+                            <!-- Spacer slide so the last real slide aligns to the left -->
+                            <div class="swiper-slide w-[15vw] md:w-[30vw] lg:w-[calc(100vw-900px-(50vw-700px))] shrink-0 pointer-events-none opacity-0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Container & Arrows -->
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mt-6 md:mt-10 flex flex-col md:flex-row justify-between relative" data-reveal="rise">
+                    <div class="w-full lg:w-[800px] relative overflow-hidden" style="min-height: 250px;">
+                        <div id="project-text-container" class="absolute inset-0 flex flex-col w-full transition-transform duration-500 ease-in-out">
+                            <div class="text-content-wrapper flex flex-col h-full w-full">
+                                <span class="project-client-year text-[11px] font-black uppercase tracking-widest text-gray-400 mb-3 block">
+                                    <!-- Populated via JS -->
+                                </span>
+                                <h3 class="project-title text-[16px] font-[450] tracking-tight mb-2 leading-snug">
+                                    <span class="inline-block text-ag-black"></span>
+                                </h3>
+                                <div class="project-excerpt text-[16px] font-[350] text-gray-500 leading-relaxed line-clamp-2 md:line-clamp-3 mb-8 max-w-xl">
+                                </div>
+                                <a href="#" class="project-link btn-animated btn-animated-ghost self-start">
+                                    <div class="btn-animated-bg"></div>
+                                    <div class="btn-animated-content">
+                                        <div class="btn-animated-text">
+                                            <span><?php echo theme_t('Дивитись кейс', 'View case', 'Смотреть проект'); ?></span>
+                                            <span><?php echo theme_t('Дивитись кейс', 'View case', 'Смотреть проект'); ?></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Arrows placed horizontally aligned with the right edge of the slide area (w-[900px] typically) -->
+                    <div class="hidden md:flex items-center gap-1 bg-[#F8F9FC] p-1 rounded-full self-start absolute z-10" style="left: calc(70vw - 110px); top: 0;">
+                        <button class="swiper-btn-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <button class="swiper-btn-next custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="max-w-[1400px] mx-auto px-4 mt-8 flex justify-center md:hidden">
                     <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
-                    <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-ghost" data-reveal="left">
-                        <?php echo esc_html($fields['link_text']); ?>
-                        <svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="M1 5H11M6.5 1L11 5L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-animated btn-animated-ghost flex w-full max-w-sm">
+                        <div class="btn-animated-bg"></div>
+                        <div class="btn-animated-content">
+                            <div class="btn-animated-text">
+                                <span><?php echo esc_html($fields['link_text']); ?></span>
+                                <span><?php echo esc_html($fields['link_text']); ?></span>
+                            </div>
+                        </div>
                     </a>
                     <?php endif; ?>
-                </div>
-                <span class="section-line mb-10" data-reveal="line"></span>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    <?php 
-                    $i = 1;
-                    if ( $projects->have_posts() ) : 
-                        while ( $projects->have_posts() ) : $projects->the_post(); 
-                            $client = carbon_get_the_post_meta('project_client');
-                            $year = carbon_get_the_post_meta('project_year');
-                            $video = carbon_get_the_post_meta('project_video');
-                            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'large');
-                    ?>
-                    <a href="<?php the_permalink(); ?>" class="card-hover group flex flex-col transition-all" data-reveal="rise" data-delay="<?php echo $i; ?>">
-                        <div class="relative aspect-video bg-ag-light rounded-[2rem] overflow-hidden mb-4">
-                            <?php if ( $video ) : ?>
-                            <iframe src="<?php echo esc_url($video); ?>" class="w-full h-full pointer-events-none grayscale group-hover:grayscale-0 transition-[filter] duration-500" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-                            <?php elseif ( $thumbnail ) : ?>
-                            <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-500" loading="lazy" />
-                            <?php else : ?>
-                            <div class="w-full h-full flex items-center justify-center bg-ag-light grayscale group-hover:grayscale-0 transition-[filter] duration-500">
-                                <span class="text-6xl font-black text-gray-200 select-none"><?php echo substr(get_the_title(), 0, 1); ?></span>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="flex flex-col flex-grow">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                                <?php echo esc_html($client); ?> · <?php echo esc_html($year); ?>
-                            </span>
-                            <h3 class="text-xl font-bold mb-2 leading-snug">
-                                <span class="text-wipe-hover inline-block"><?php the_title(); ?></span>
-                            </h3>
-                            <div class="text-sm text-gray-500 leading-relaxed line-clamp-2 flex-grow mb-4">
-                                <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
-                            </div>
-                            <span class="btn-ghost self-start text-[10px] mt-auto">
-                                <?php echo theme_t('Читати далі', 'Read more', 'Читать далее'); ?>
-                                <svg width="10" height="8" viewBox="0 0 12 10" fill="none" aria-hidden="true"><path d="M1 5H11M6.5 1L11 5L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </span>
-                        </div>
-                    </a>
-                    <?php 
-                        $i++;
-                        endwhile; 
-                        wp_reset_postdata();
-                    endif; 
-                    ?>
                 </div>
             </section>
             <?php
@@ -315,29 +382,36 @@ function crb_attach_blocks() {
             if ( empty($fields['logos']) ) return;
             $logos = array_merge($fields['logos'], $fields['logos'], $fields['logos'], $fields['logos']);
             ?>
-            <section class="mb-24 md:mb-32">
-                <div class="mb-3">
-                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-ag-black" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+            <section class="breakout py-12 mb-16 overflow-hidden bg-white">
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-12">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <h2 class="text-[36px] font-[450] text-ag-black tracking-tight m-0" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+                        <?php if ( $fields['subtitle'] ) : ?>
+                            <p class="text-[16px] font-normal text-gray-500 max-w-md m-0 text-left md:text-right" data-reveal="rise" data-delay="1">
+                                <?php echo esc_html($fields['subtitle']); ?>
+                            </p>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <span class="section-line mb-6" data-reveal="line"></span>
-                <p class="text-sm text-gray-400 mb-10" data-reveal="rise"><?php echo esc_html($fields['subtitle']); ?></p>
                 
-                <div class="overflow-hidden w-full relative" data-reveal="rise">
-                    <div class="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#fdfbf6] to-transparent z-10 pointer-events-none"></div>
-                    <div class="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#fdfbf6] to-transparent z-10 pointer-events-none"></div>
+                <div class="relative w-full overflow-hidden py-12" data-reveal="rise">
                     
-                    <div class="flex w-max animate-marquee hover:[animation-play-state:paused] items-center">
-                        <?php foreach ( $logos as $logo ) : ?>
-                        <a href="<?php echo esc_url($logo['url'] ?: '#'); ?>" <?php if($logo['url']) echo 'target="_blank" rel="noopener noreferrer"'; ?> class="flex items-center justify-center mx-6 md:mx-10 group opacity-80 hover:opacity-100 transition-all duration-500" title="<?php echo esc_attr($logo['name']); ?>">
+                    <!-- Container moves horizontally via JS -->
+                    <div class="flex w-max items-center js-scroll-marquee will-change-transform">
+                        <?php 
+                        foreach ( $logos as $index => $logo ) : 
+                            $delay = $index * 0.25;
+                        ?>
+                        <a href="<?php echo esc_url($logo['url'] ?: '#'); ?>" <?php if($logo['url']) echo 'target="_blank" rel="noopener noreferrer"'; ?> 
+                           style="animation-delay: -<?php echo $delay; ?>s;"
+                           class="partner-pill group flex items-center justify-center mx-1 px-8 py-4 bg-[#F9F9FC] border border-[rgba(33,34,38,0.06)] rounded-full hover:border-[rgba(33,34,38,0.15)] hover:shadow-sm transition-colors duration-300" 
+                           title="<?php echo esc_attr($logo['name']); ?>">
                             <?php if ( $logo['image'] ) : ?>
-                            <div class="relative h-8">
-                                <img src="<?php echo esc_url($logo['image']); ?>" alt="<?php echo esc_attr($logo['name']); ?>" class="h-8 object-contain max-w-[120px] grayscale" />
-                                <img src="<?php echo esc_url($logo['image']); ?>" aria-hidden="true" alt="" class="h-8 object-contain max-w-[120px] absolute top-0 left-0 [clip-path:inset(0_100%_0_0)] group-hover:[clip-path:inset(0_0_0_0)] transition-[clip-path] duration-500 ease-in-out" />
-                            </div>
+                                <img src="<?php echo esc_url($logo['image']); ?>" alt="<?php echo esc_attr($logo['name']); ?>" class="h-7 object-contain grayscale opacity-70 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300" />
                             <?php else : ?>
-                            <span class="text-sm font-black uppercase tracking-widest text-wipe-hover">
-                                <?php echo esc_html($logo['name']); ?>
-                            </span>
+                                <span class="text-[15px] font-[450] text-ag-black">
+                                    <?php echo esc_html($logo['name']); ?>
+                                </span>
                             <?php endif; ?>
                         </a>
                         <?php endforeach; ?>
@@ -455,6 +529,78 @@ function crb_attach_blocks() {
                     <?php endif; ?>
                 </div>
             </div>
+            <?php
+        } );
+
+    // 7.4 Split Promo
+    Block::make( __( 'Split Promo' ) )
+        ->set_category( 'shashkevych-blocks' )
+        ->add_fields( array(
+            Field::make( 'text', 'left_tag', __( 'Left Tag' ) )->set_default_value('Available at no charge'),
+            Field::make( 'text', 'left_title', __( 'Left Title' ) )->set_default_value('For developers'),
+            Field::make( 'textarea', 'left_text', __( 'Left Text' ) )->set_default_value('Achieve new heights'),
+            Field::make( 'text', 'left_btn_text', __( 'Left Button Text' ) )->set_default_value('Download'),
+            Field::make( 'text', 'left_btn_url', __( 'Left Button URL' ) ),
+            
+            Field::make( 'text', 'right_tag', __( 'Right Tag' ) )->set_default_value('Now Available!'),
+            Field::make( 'text', 'right_title', __( 'Right Title' ) )->set_default_value('For organizations'),
+            Field::make( 'textarea', 'right_text', __( 'Right Text' ) )->set_default_value('Level up your entire team'),
+            Field::make( 'text', 'right_btn_text', __( 'Right Button Text' ) )->set_default_value('Read More'),
+            Field::make( 'text', 'right_btn_url', __( 'Right Button URL' ) ),
+        ) )
+        ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
+            ?>
+            <section class="split-promo-block breakout relative py-20 lg:py-32 overflow-hidden bg-white">
+                <div class="split-promo-canvas absolute inset-0 z-0 pointer-events-none"></div>
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 relative z-10 flex flex-col md:flex-row min-h-[500px] md:min-h-[600px] gap-8">
+                    <!-- Left Side -->
+                    <div class="flex-1 flex flex-col items-center justify-center text-center split-promo-left group relative">
+                        <span class="text-[11px] font-semibold px-3 py-1.5 border border-gray-100 rounded-full mb-6 bg-white/50 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.03)] uppercase tracking-wider text-gray-500">
+                            <?php echo esc_html($fields['left_tag']); ?>
+                        </span>
+                        <h2 class="text-3xl md:text-4xl lg:text-[40px] font-[450] text-ag-black tracking-tight mb-2">
+                            <?php echo esc_html($fields['left_title']); ?>
+                        </h2>
+                        <p class="text-[16px] md:text-[20px] font-[350] text-gray-500 mb-8 max-w-sm leading-relaxed">
+                            <?php echo esc_html($fields['left_text']); ?>
+                        </p>
+                        <?php if ( $fields['left_btn_text'] && $fields['left_btn_url'] ) : ?>
+                        <a href="<?php echo esc_url($fields['left_btn_url']); ?>" class="btn-animated pointer-events-auto shadow-lg hover:shadow-xl transition-shadow">
+                            <div class="btn-animated-bg"></div>
+                            <div class="btn-animated-content">
+                                <div class="btn-animated-text">
+                                    <span><?php echo esc_html($fields['left_btn_text']); ?></span>
+                                    <span><?php echo esc_html($fields['left_btn_text']); ?></span>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                    <!-- Right Side -->
+                    <div class="flex-1 flex flex-col items-center justify-center text-center split-promo-right group relative">
+                        <span class="text-[11px] font-semibold px-3 py-1.5 border border-gray-100 rounded-full mb-6 bg-white/50 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.03)] uppercase tracking-wider text-gray-500">
+                            <?php echo esc_html($fields['right_tag']); ?>
+                        </span>
+                        <h2 class="text-3xl md:text-4xl lg:text-[40px] font-[450] text-ag-black tracking-tight mb-2">
+                            <?php echo esc_html($fields['right_title']); ?>
+                        </h2>
+                        <p class="text-[16px] md:text-[20px] font-[350] text-gray-500 mb-8 max-w-sm leading-relaxed">
+                            <?php echo esc_html($fields['right_text']); ?>
+                        </p>
+                        <?php if ( $fields['right_btn_text'] && $fields['right_btn_url'] ) : ?>
+                        <a href="<?php echo esc_url($fields['right_btn_url']); ?>" class="btn-animated btn-animated-ghost pointer-events-auto shadow-sm hover:shadow-md transition-shadow">
+                            <div class="btn-animated-bg"></div>
+                            <div class="btn-animated-content">
+                                <div class="btn-animated-text">
+                                    <span><?php echo esc_html($fields['right_btn_text']); ?></span>
+                                    <span><?php echo esc_html($fields['right_btn_text']); ?></span>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </section>
             <?php
         } );
 }

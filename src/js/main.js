@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import Swiper from 'swiper';
+import { Navigation } from 'swiper/modules';
 
 // Initialize all scripts
     // ── Dropdown script ──
@@ -45,14 +47,33 @@ import * as THREE from 'three';
       }, { passive: true });
     }
 
+    // ── Scroll Marquee ──
+    const scrollMarquees = document.querySelectorAll('.js-scroll-marquee');
+    if (scrollMarquees.length > 0) {
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        scrollMarquees.forEach(marquee => {
+          // Adjust multiplier for speed
+          marquee.style.transform = `translateX(-${scrollY * 0.8}px)`;
+        });
+      }, { passive: true });
+    }
+
     // ── Page transition curtain script ──
     const curtain = document.getElementById('page-curtain');
 
+
+
     function curtainLeave() {
-      if (!curtain) return;
+      if (!curtain) {
+          startReveals();
+          return;
+      }
       curtain.classList.remove('enter-from-top', 'covered');
       curtain.getBoundingClientRect(); // Force reflow
       curtain.classList.add('leave');
+      
+      setTimeout(startReveals, 300); // Start reveals slightly after curtain starts leaving
     }
 
     function initCurtain() {
@@ -124,6 +145,149 @@ import * as THREE from 'three';
       toggleMenu(!isOpen);
     });
 
+    // ── Swiper Initialization & Custom Cursor ──
+    const swiperEl = document.querySelector('.featured-projects-swiper');
+    if (swiperEl) {
+      
+      const textContainer = document.getElementById('project-text-container');
+      const textTitle = document.querySelector('.project-title span');
+      const textExcerpt = document.querySelector('.project-excerpt');
+      const textMeta = document.querySelector('.project-client-year');
+      const textLink = document.querySelector('.project-link');
+
+      const updateSliderText = (swiper) => {
+        if (!textContainer) return;
+        const activeSlide = swiper.slides[swiper.activeIndex];
+        if (!activeSlide || activeSlide.classList.contains('pointer-events-none')) return;
+        
+        const title = activeSlide.getAttribute('data-title');
+        const excerpt = activeSlide.getAttribute('data-excerpt');
+        const client = activeSlide.getAttribute('data-client');
+        const year = activeSlide.getAttribute('data-year');
+        const url = activeSlide.getAttribute('data-url');
+        
+        // Slide up out
+        textContainer.classList.add('text-slide-up-out');
+        
+        setTimeout(() => {
+          // Update text
+          if(textTitle) textTitle.textContent = title;
+          if(textExcerpt) textExcerpt.textContent = excerpt;
+          if(textMeta) textMeta.textContent = `${client} · ${year}`;
+          if(textLink) textLink.setAttribute('href', url || '#');
+          
+          // Reset to bottom
+          textContainer.classList.remove('text-slide-up-out');
+          textContainer.classList.add('text-slide-up-in');
+          
+          // Allow DOM to update
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+               // Slide up in to normal position
+               textContainer.classList.remove('text-slide-up-in');
+            });
+          });
+        }, 300); // Wait for fade out
+      };
+
+      const mySwiper = new Swiper(swiperEl, {
+        modules: [Navigation],
+        slidesPerView: 'auto',
+        spaceBetween: 24,
+        navigation: {
+          nextEl: '.swiper-btn-next',
+          prevEl: '.swiper-btn-prev',
+        },
+        breakpoints: {
+          768: { spaceBetween: 32 },
+          1024: { spaceBetween: 40 }
+        },
+        on: {
+          init: function () {
+            // Set initial text without animation
+            const activeSlide = this.slides[this.activeIndex];
+            if (!activeSlide || !textContainer) return;
+            const title = activeSlide.getAttribute('data-title');
+            const excerpt = activeSlide.getAttribute('data-excerpt');
+            const client = activeSlide.getAttribute('data-client');
+            const year = activeSlide.getAttribute('data-year');
+            const url = activeSlide.getAttribute('data-url');
+            if(textTitle) textTitle.textContent = title;
+            if(textExcerpt) textExcerpt.textContent = excerpt;
+            if(textMeta) textMeta.textContent = `${client} · ${year}`;
+            if(textLink) textLink.setAttribute('href', url || '#');
+          },
+          slideChange: function () {
+            updateSliderText(this);
+          }
+        }
+      });
+      
+      // Custom Cursor Logic with micro-delay (lerp)
+      const imageWrappers = document.querySelectorAll('.project-image-wrapper');
+      
+      imageWrappers.forEach(wrapper => {
+        const btn = wrapper.querySelector('.watch-case-btn');
+        if (!btn) return;
+        
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+        let isHovering = false;
+        let animationFrameId;
+
+        const lerp = (start, end, factor) => start + (end - start) * factor;
+
+        const updateBtnPosition = () => {
+          if (!isHovering) return;
+          
+          currentX = lerp(currentX, mouseX, 0.15); // Adjust factor for delay amount (lower = more delay)
+          currentY = lerp(currentY, mouseY, 0.15);
+          
+          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(1)`;
+          
+          animationFrameId = requestAnimationFrame(updateBtnPosition);
+        };
+        
+        wrapper.addEventListener('mouseenter', (e) => {
+          isHovering = true;
+          
+          // Initialize current position to mouse entry point to avoid flying in from 0,0
+          const rect = wrapper.getBoundingClientRect();
+          currentX = mouseX = e.clientX - rect.left;
+          currentY = mouseY = e.clientY - rect.top;
+          
+          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
+          
+          btn.classList.remove('is-leaving');
+          btn.classList.add('is-active');
+          
+          updateBtnPosition();
+        });
+        
+        wrapper.addEventListener('mousemove', (e) => {
+          const rect = wrapper.getBoundingClientRect();
+          mouseX = e.clientX - rect.left;
+          mouseY = e.clientY - rect.top;
+        });
+        
+        wrapper.addEventListener('mouseleave', () => {
+          isHovering = false;
+          cancelAnimationFrame(animationFrameId);
+          
+          btn.classList.remove('is-active');
+          btn.classList.add('is-leaving');
+          // Scale down at current position
+          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
+        });
+        
+        // Ensure click on wrapper goes to the link
+        wrapper.addEventListener('click', () => {
+          const url = wrapper.getAttribute('data-project-url');
+          if (url) window.location.href = url;
+        });
+      });
+    }
+
     mobileMenu?.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => toggleMenu(false));
     });
@@ -145,7 +309,7 @@ import * as THREE from 'three';
           const chars = word
             .split('')
             .map((ch) => {
-              const delay = (charIndex++ * 0.032).toFixed(3);
+              const delay = (charIndex++ * 0.064).toFixed(3);
               return `<span class="char" style="animation-delay:${delay}s">${ch}</span>`;
             })
             .join('');
@@ -155,18 +319,35 @@ import * as THREE from 'three';
       el.innerHTML = html;
     });
 
-    requestAnimationFrame(() => {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            io.unobserve(entry.target);
+    function startReveals() {
+      requestAnimationFrame(() => {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
+        
+        const ioMiddle = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              ioMiddle.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0, rootMargin: '0px 0px -70% 0px' });
+
+        document.querySelectorAll('[data-reveal]').forEach((el) => {
+          if (el.dataset.revealMargin === 'middle') {
+            ioMiddle.observe(el);
+          } else {
+            io.observe(el);
           }
         });
-      }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
-
-      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
-    });
+      });
+    }
 
     // ── Three.js Particle Background ──
     function initParticles() {
@@ -377,8 +558,207 @@ import * as THREE from 'three';
       });
     }
 
+    // ── Split Promo Particles ──
+    function initSplitPromoParticles() {
+      const container = document.querySelector('.split-promo-canvas');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      const particlesCount = 2000;
+      const geometry = new THREE.BufferGeometry();
+      
+      const positions = new Float32Array(particlesCount * 3);
+      const targetPositions = new Float32Array(particlesCount * 3);
+      const originalPositions = new Float32Array(particlesCount * 3);
+      
+      const colors = new Float32Array(particlesCount * 3);
+      const targetColors = new Float32Array(particlesCount * 3);
+
+      // Base color: Purple (#9333ea) -> [0.57, 0.2, 0.91]
+      // Left color: Pink (#ec4899) -> [0.92, 0.28, 0.6]
+      // Right color: Blue (#3b82f6) -> [0.23, 0.51, 0.96]
+      const colorBase = new THREE.Color('#9333ea');
+      const colorLeft = new THREE.Color('#ec4899');
+      const colorRight = new THREE.Color('#3b82f6');
+
+      camera.position.z = 4;
+      const fovRad = (75 * Math.PI) / 180;
+      const heightWorld = 2 * 4 * Math.tan(fovRad / 2); 
+      let widthWorld = heightWorld * camera.aspect;
+
+      for (let i = 0; i < particlesCount; i++) {
+        const i3 = i * 3;
+        
+        // Random scattered original positions (relative to their side)
+        const isLeft = i < (particlesCount / 2);
+        const xOffset = (Math.random() - 0.5) * (widthWorld / 2) * 0.8;
+        const yOffset = (Math.random() - 0.5) * heightWorld * 0.8;
+        const zOffset = (Math.random() - 0.5) * 2;
+
+        positions[i3] = xOffset;
+        positions[i3+1] = yOffset;
+        positions[i3+2] = zOffset;
+        
+        originalPositions[i3] = xOffset;
+        originalPositions[i3+1] = yOffset;
+        originalPositions[i3+2] = zOffset;
+
+        colors[i3] = colorBase.r;
+        colors[i3+1] = colorBase.g;
+        colors[i3+2] = colorBase.b;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      // Circular texture
+      const canvas = document.createElement('canvas');
+      canvas.width = 16;
+      canvas.height = 16;
+      const ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.arc(8, 8, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      const texture = new THREE.CanvasTexture(canvas);
+
+      const material = new THREE.PointsMaterial({
+        size: 0.03,
+        map: texture,
+        transparent: true,
+        vertexColors: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      const half = particlesCount / 2;
+
+      // Pre-calculate 2D shape targets
+      const ringTargets = [];
+      for (let i = 0; i < half; i++) {
+        // 2D Ring
+        const angle = (i / half) * Math.PI * 2;
+        const radius = 1.2 + (Math.random() * 0.2 - 0.1); // slight noise
+        ringTargets.push({
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius
+        });
+      }
+
+      const lotusTargets = [];
+      for (let i = 0; i < half; i++) {
+        // 2D Lotus (Rose curve)
+        const angle = (i / half) * Math.PI * 20; // wrap around multiple times for density
+        const petalFactor = Math.abs(Math.sin(3 * angle)); // 6 petals
+        const radius = 0.4 + 1.2 * Math.pow(petalFactor, 1.5) + (Math.random() * 0.1);
+        lotusTargets.push({
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius
+        });
+      }
+
+      let activeState = 'none'; // 'none', 'left', 'right'
+      let shapeRotation = 0;
+
+      const leftCol = document.querySelector('.split-promo-left');
+      const rightCol = document.querySelector('.split-promo-right');
+
+      if (leftCol) {
+        leftCol.addEventListener('mouseenter', () => { activeState = 'left'; });
+        leftCol.addEventListener('mouseleave', () => { if(activeState === 'left') activeState = 'none'; });
+      }
+      if (rightCol) {
+        rightCol.addEventListener('mouseenter', () => { activeState = 'right'; });
+        rightCol.addEventListener('mouseleave', () => { if(activeState === 'right') activeState = 'none'; });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        const posAttr = geometry.attributes.position;
+        const colAttr = geometry.attributes.color;
+        
+        shapeRotation += 0.01;
+        widthWorld = heightWorld * camera.aspect;
+        const centerXLeft = -widthWorld / 4;
+        const centerXRight = widthWorld / 4;
+
+        for (let i = 0; i < particlesCount; i++) {
+          const isLeft = i < half;
+          const i3 = i * 3;
+          let tx, ty, tz, tc;
+          
+          const centerX = isLeft ? centerXLeft : centerXRight;
+
+          if (activeState === 'left' && isLeft) {
+            // Apply 2D Z-rotation to Ring target
+            const st = ringTargets[i];
+            const cos = Math.cos(shapeRotation);
+            const sin = Math.sin(shapeRotation);
+            tx = st.x * cos - st.y * sin + centerXLeft;
+            ty = st.x * sin + st.y * cos;
+            tz = 0;
+            tc = colorLeft;
+          } else if (activeState === 'right' && !isLeft) {
+            // Apply 2D Z-rotation to Lotus target (slower spin)
+            const tt = lotusTargets[i - half];
+            const cos = Math.cos(-shapeRotation * 0.5);
+            const sin = Math.sin(-shapeRotation * 0.5);
+            tx = tt.x * cos - tt.y * sin + centerXRight;
+            ty = tt.x * sin + tt.y * cos;
+            tz = 0;
+            tc = colorRight;
+          } else {
+            // Back to original floating positions (centered on their side)
+            tx = originalPositions[i3] + Math.sin(shapeRotation * 0.5 + i) * 0.2 + centerX;
+            ty = originalPositions[i3+1] + Math.cos(shapeRotation * 0.3 + i) * 0.2;
+            tz = originalPositions[i3+2];
+            tc = colorBase;
+          }
+
+          // Lerp position
+          posAttr.array[i3] += (tx - posAttr.array[i3]) * 0.05;
+          posAttr.array[i3+1] += (ty - posAttr.array[i3+1]) * 0.05;
+          posAttr.array[i3+2] += (tz - posAttr.array[i3+2]) * 0.05;
+
+          // Lerp color
+          colAttr.array[i3] += (tc.r - colAttr.array[i3]) * 0.05;
+          colAttr.array[i3+1] += (tc.g - colAttr.array[i3+1]) * 0.05;
+          colAttr.array[i3+2] += (tc.b - colAttr.array[i3+2]) * 0.05;
+        }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      window.addEventListener('resize', () => {
+        if (!container) return;
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    }
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initParticles);
+      document.addEventListener('DOMContentLoaded', () => {
+        initParticles();
+        initSplitPromoParticles();
+      });
     } else {
       initParticles();
+      initSplitPromoParticles();
     }
