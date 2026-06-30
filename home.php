@@ -14,58 +14,61 @@ $description = theme_t(
 );
 ?>
 
-<div class="max-w-4xl mx-auto">
-    <div class="mb-3">
-        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-0 tracking-tight" data-reveal="letters">
+<div class="relative w-full min-h-[70vh] flex flex-col items-center justify-center overflow-hidden bg-ag-black pt-32 pb-20">
+    <!-- Three.js Canvas Container -->
+    <div id="canvas-container" class="absolute inset-0 z-0 opacity-80 pointer-events-none"></div>
+    
+    <div class="relative z-10 max-w-[1400px] w-full mx-auto px-6 lg:px-10 text-center">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 tracking-tighter" data-reveal="rise">
             <?php echo esc_html( $title ); ?>
         </h1>
+        <p class="text-white/70 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12 font-medium" data-reveal="rise" data-delay="2">
+            <?php echo esc_html( $description ); ?>
+        </p>
     </div>
-    
-    <span class="section-line mb-6" data-reveal="line"></span>
-    
-    <p class="text-gray-500 text-base md:text-lg max-w-xl leading-relaxed mb-12" data-reveal="rise">
-        <?php echo esc_html( $description ); ?>
-    </p>
+</div>
 
-    <?php if ( have_posts() ) : ?>
-        <div class="divide-y divide-gray-200">
-            <?php 
-            $i = 0;
-            while ( have_posts() ) : the_post(); 
-                $delay = ($i % 5) + 1;
-            ?>
-            <a href="<?php the_permalink(); ?>" class="group flex flex-col md:flex-row md:items-start justify-between gap-4 py-7 hover:bg-white transition-colors duration-500 px-2 -mx-2" data-reveal="rise" data-delay="<?php echo $delay; ?>">
-                
-                <div class="flex-grow">
-                    <h2 class="text-base font-bold text-gray-900 group-hover:text-[var(--accent)] transition-colors mb-2 leading-snug">
+<div class="bg-ag-white text-ag-black py-24 rounded-t-[3rem] -mt-12 relative z-20 shadow-[0_-20px_40px_rgba(0,0,0,0.3)]">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+        <?php if ( have_posts() ) : ?>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php 
+                $i = 0;
+                while ( have_posts() ) : the_post(); 
+                    $delay = ($i % 5) + 1;
+                ?>
+                <a href="<?php the_permalink(); ?>" class="group block bg-ag-light rounded-[2rem] p-8 hover:bg-gray-100 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-gray-100" data-reveal="rise" data-delay="<?php echo $delay; ?>">
+                    <h2 class="text-2xl font-bold text-ag-black group-hover:text-ag-accent transition-colors mb-4 leading-snug tracking-tight">
                         <?php the_title(); ?>
                     </h2>
-                    <p class="text-sm text-gray-500 leading-relaxed line-clamp-2">
+                    <p class="text-base text-gray-500 leading-relaxed line-clamp-3">
                         <?php echo wp_trim_words( get_the_excerpt(), 20 ); ?>
                     </p>
-                </div>
-                
-                <div class="flex items-center gap-3 shrink-0">
-                    <svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true" class="opacity-0 group-hover:opacity-100 transition-opacity text-[var(--accent)]"><path d="M1 5H11M6.5 1L11 5L6.5 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-            </a>
-            <?php 
-            $i++;
-            endwhile; 
+                    <div class="mt-8 flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-ag-black transition-colors">Read Article</span>
+                        <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center group-hover:bg-ag-black group-hover:border-ag-black group-hover:text-white transition-all shadow-sm">
+                            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" class="opacity-70 group-hover:opacity-100"><path d="M1 6H13M8 1L13 6L8 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </div>
+                </a>
+                <?php 
+                $i++;
+                endwhile; 
+                ?>
+            </div>
+
+            <?php
+            the_posts_pagination( array(
+                'prev_text' => theme_t('Попередня', 'Previous', 'Предыдущая'),
+                'next_text' => theme_t('Наступна', 'Next', 'Следующая'),
+                'class' => 'mt-20 flex justify-center gap-4 pagination-antigravity'
+            ) );
             ?>
-        </div>
 
-        <?php
-        the_posts_pagination( array(
-            'prev_text' => theme_t('Попередня', 'Previous', 'Предыдущая'),
-            'next_text' => theme_t('Наступна', 'Next', 'Следующая'),
-            'class' => 'mt-12 flex justify-center gap-2'
-        ) );
-        ?>
-
-    <?php else : ?>
-        <p class="text-gray-500 text-lg"><?php echo theme_t('Нічого не знайдено', 'Nothing Found', 'Ничего не найдено'); ?></p>
-    <?php endif; ?>
+        <?php else : ?>
+            <p class="text-gray-500 text-lg text-center"><?php echo theme_t('Нічого не знайдено', 'Nothing Found', 'Ничего не найдено'); ?></p>
+        <?php endif; ?>
+    </div>
 </div>
 
 <?php

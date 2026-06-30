@@ -165,7 +165,7 @@ function crb_attach_blocks() {
             ?>
             <section class="mb-24 md:mb-32 pt-8 flex flex-col md:flex-row items-center gap-12 md:gap-16">
                 <div class="flex-1 max-w-4xl">
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 leading-[1.05] mb-7 tracking-tight" data-reveal="letters">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-ag-black leading-[1.05] mb-7 tracking-tight" data-reveal="letters">
                         <?php echo esc_html( $fields['heading'] ); ?>
                     </h1>
                     <p class="text-lg md:text-xl text-gray-500 leading-relaxed max-w-2xl mb-10" data-reveal="rise">
@@ -231,7 +231,7 @@ function crb_attach_blocks() {
             ?>
             <section class="mb-24 md:mb-32">
                 <div class="flex items-end justify-between mb-3">
-                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-900" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-ag-black" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
                     <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
                     <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-ghost" data-reveal="left">
                         <?php echo esc_html($fields['link_text']); ?>
@@ -252,13 +252,13 @@ function crb_attach_blocks() {
                             $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'large');
                     ?>
                     <a href="<?php the_permalink(); ?>" class="card-hover group flex flex-col transition-all" data-reveal="rise" data-delay="<?php echo $i; ?>">
-                        <div class="relative aspect-video bg-gray-100 overflow-hidden mb-4">
+                        <div class="relative aspect-video bg-ag-light rounded-[2rem] overflow-hidden mb-4">
                             <?php if ( $video ) : ?>
                             <iframe src="<?php echo esc_url($video); ?>" class="w-full h-full pointer-events-none grayscale group-hover:grayscale-0 transition-[filter] duration-500" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
                             <?php elseif ( $thumbnail ) : ?>
                             <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-500" loading="lazy" />
                             <?php else : ?>
-                            <div class="w-full h-full flex items-center justify-center bg-gray-50 grayscale group-hover:grayscale-0 transition-[filter] duration-500">
+                            <div class="w-full h-full flex items-center justify-center bg-ag-light grayscale group-hover:grayscale-0 transition-[filter] duration-500">
                                 <span class="text-6xl font-black text-gray-200 select-none"><?php echo substr(get_the_title(), 0, 1); ?></span>
                             </div>
                             <?php endif; ?>
@@ -309,7 +309,7 @@ function crb_attach_blocks() {
             ?>
             <section class="mb-24 md:mb-32">
                 <div class="mb-3">
-                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-900" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-ag-black" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
                 </div>
                 <span class="section-line mb-6" data-reveal="line"></span>
                 <p class="text-sm text-gray-400 mb-10" data-reveal="rise"><?php echo esc_html($fields['subtitle']); ?></p>
@@ -375,7 +375,7 @@ function crb_attach_blocks() {
             ?>
             <section class="mb-24 md:mb-32">
                 <div class="flex items-end justify-between mb-3">
-                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-gray-900" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-ag-black" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
                     <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
                     <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-ghost" data-reveal="left">
                         <?php echo esc_html($fields['link_text']); ?>
@@ -392,7 +392,7 @@ function crb_attach_blocks() {
                         while ( $posts->have_posts() ) : $posts->the_post(); 
                     ?>
                     <a href="<?php the_permalink(); ?>" class="card-hover group block p-6 transition-colors border-b md:border-b-0 md:border-r border-gray-200 md:[&:nth-child(3n)]:border-r-0 last:border-0 md:last:border-r-0" data-reveal="rise" data-delay="<?php echo $i; ?>">
-                        <h3 class="text-sm font-bold text-gray-900 group-hover:text-[var(--accent)] transition-colors mb-2 leading-snug">
+                        <h3 class="text-sm font-bold text-ag-black group-hover:text-ag-accent transition-colors mb-2 leading-snug">
                             <?php the_title(); ?>
                         </h3>
                         <div class="text-xs text-gray-500 leading-relaxed line-clamp-3">
@@ -427,7 +427,7 @@ function crb_attach_blocks() {
             <div class="max-w-5xl mx-auto my-12">
                 <div class="flex flex-col md:flex-row gap-12 lg:gap-20 items-start">
                     <div class="flex-1">
-                        <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight" data-reveal="letters">
+                        <h1 class="text-4xl md:text-5xl font-black text-ag-black mb-6 tracking-tight" data-reveal="letters">
                             <?php echo esc_html( $fields['heading'] ); ?>
                         </h1>
                         <span class="section-line mb-8" data-reveal="line"></span>

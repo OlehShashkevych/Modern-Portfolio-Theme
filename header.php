@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <?php wp_head(); ?>
 </head>
-<body <?php body_class("flex flex-col min-h-screen bg-[#fdfbf6] text-gray-900"); ?>>
+<body <?php body_class("flex flex-col min-h-screen bg-ag-black text-ag-white font-sans selection:bg-ag-accent selection:text-white antialiased"); ?>>
 <?php wp_body_open(); ?>
 
 <!-- Page transition curtain -->
@@ -46,8 +46,9 @@
 </div>
 
 <!-- Header Navigation -->
-<header class="border-b border-gray-200 bg-[#fdfbf6] sticky top-0 z-[160]">
-    <div class="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
+<header class="fixed top-0 left-0 right-0 z-[160] transition-colors duration-300" id="main-header">
+    <div class="absolute inset-0 bg-ag-black/70 backdrop-blur-md border-b border-white/10 z-0"></div>
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between relative z-10">
         
         <!-- Logo -->
         <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="group font-black text-base tracking-tight uppercase relative z-[200]">
