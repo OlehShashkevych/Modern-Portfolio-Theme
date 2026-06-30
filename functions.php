@@ -13,7 +13,9 @@ function shashkevych_setup() {
     
     register_nav_menus( array(
         'primary' => __( 'Primary Menu', 'shashkevych' ),
-        'footer'  => __( 'Footer Menu', 'shashkevych' ),
+        'footer_1'  => __( 'Footer Menu 1', 'shashkevych' ),
+        'footer_2'  => __( 'Footer Menu 2', 'shashkevych' ),
+        'footer_policies'  => __( 'Footer Policies Menu', 'shashkevych' ),
     ) );
 }
 add_action( 'after_setup_theme', 'shashkevych_setup' );
@@ -22,6 +24,8 @@ add_action( 'after_setup_theme', 'shashkevych_setup' );
 function shashkevych_nav_menu_link_attributes( $atts, $item, $args ) {
     if ( $args->theme_location === 'primary' ) {
         $atts['class'] = 'nav-link text-[15px] font-normal leading-[1.5] text-[#45474D] hover:text-ag-black transition-colors';
+    } elseif ( strpos( $args->theme_location, 'footer_' ) === 0 ) {
+        $atts['class'] = (isset($atts['class']) ? $atts['class'] . ' ' : '') . 'nav-link inline-block hover:text-ag-black transition-colors';
     }
     return $atts;
 }
@@ -163,12 +167,12 @@ function crb_attach_blocks() {
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
             ?>
-            <section class="breakout relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 text-center overflow-hidden mb-12">
+            <section class="breakout relative min-h-screen flex flex-col items-center justify-center pt-20 md:pt-32 pb-12 md:pb-20 text-center overflow-hidden mb-8 md:mb-12">
                 <!-- Particles Container -->
                 <div id="hero-particles" class="absolute inset-0 z-0 pointer-events-none"></div>
 
                 <div class="relative z-10 max-w-4xl mx-auto px-6">
-                    <h1 class="text-5xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.2] mb-6 tracking-tight" data-reveal="letters">
+                    <h1 class="text-4xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.1] md:leading-[1.2] mb-6 tracking-tight" data-reveal="letters">
                         <?php echo esc_html( $fields['heading'] ); ?>
                     </h1>
                     <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise" data-delay="1">
@@ -237,8 +241,8 @@ function crb_attach_blocks() {
                 ));
             }
             ?>
-            <section class="breakout py-12 mb-16 overflow-hidden bg-white relative">
-                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-12">
+            <section class="breakout py-8 md:py-12 mb-8 md:mb-16 overflow-hidden bg-white relative">
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-8 md:mb-12">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <h2 class="text-[36px] font-[450] text-ag-black tracking-tight m-0" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
                         <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
@@ -292,7 +296,7 @@ function crb_attach_blocks() {
                                         
                                         <!-- Custom Cursor Button -->
                                         <div class="watch-case-btn absolute top-0 left-0 w-[150px] h-[52px] bg-white text-ag-black font-semibold text-[15px] flex items-center justify-center gap-2 rounded-full pointer-events-none z-20 transition-transform duration-300 shadow-lg scale-0 opacity-0" style="margin-top: -26px; margin-left: -75px;">
-                                            <svg width="12" height="14" viewBox="0 0 10 12" fill="currentColor"><path d="M0 11.4137V0.586267C0 0.207869 0.403487 -0.0341777 0.729112 0.148154L10.3734 5.56189C10.7099 5.75073 10.7099 6.24927 10.3734 6.43811L0.729113 11.8518C0.403488 12.0342 0 11.7921 0 11.4137Z"/></svg>
+                                            <svg width="8" height="12" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1L7 7L1 13"/></svg>
                                             <?php echo theme_t('Дивитись кейс', 'Watch case', 'Смотреть кейс'); ?>
                                         </div>
                                     </div>
@@ -312,7 +316,7 @@ function crb_attach_blocks() {
 
                 <!-- Text Container & Arrows -->
                 <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mt-6 md:mt-10 flex flex-col md:flex-row justify-between relative" data-reveal="rise">
-                    <div class="w-full lg:w-[800px] relative overflow-hidden" style="min-height: 250px;">
+                    <div class="w-full lg:w-[800px] relative overflow-hidden min-h-[180px] md:min-h-[250px]">
                         <div id="project-text-container" class="absolute inset-0 flex flex-col w-full transition-transform duration-500 ease-in-out">
                             <div class="text-content-wrapper flex flex-col h-full w-full">
                                 <span class="project-client-year text-[11px] font-black uppercase tracking-widest text-gray-400 mb-3 block">
@@ -336,8 +340,8 @@ function crb_attach_blocks() {
                         </div>
                     </div>
 
-                    <!-- Custom Arrows placed horizontally aligned with the right edge of the slide area (w-[900px] typically) -->
-                    <div class="hidden md:flex items-center gap-1 bg-[#F8F9FC] p-1 rounded-full self-start absolute z-10" style="left: calc(70vw - 110px); top: 0;">
+                    <!-- Custom Arrows placed horizontally aligned with the right edge of the slide area (w-[900px] typically) on desktop -->
+                    <div class="project-slider-arrows flex items-center justify-center gap-1 bg-[#F8F9FC] p-1 rounded-full w-max mx-auto md:mx-0 relative md:absolute z-10 mt-6 md:mt-0">
                         <button class="swiper-btn-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
@@ -348,19 +352,7 @@ function crb_attach_blocks() {
                 </div>
 
 
-                <div class="max-w-[1400px] mx-auto px-4 mt-8 flex justify-center md:hidden">
-                    <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
-                    <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-animated btn-animated-ghost flex w-full max-w-sm">
-                        <div class="btn-animated-bg"></div>
-                        <div class="btn-animated-content">
-                            <div class="btn-animated-text">
-                                <span><?php echo esc_html($fields['link_text']); ?></span>
-                                <span><?php echo esc_html($fields['link_text']); ?></span>
-                            </div>
-                        </div>
-                    </a>
-                    <?php endif; ?>
-                </div>
+
             </section>
             <?php
         } );
@@ -382,8 +374,8 @@ function crb_attach_blocks() {
             if ( empty($fields['logos']) ) return;
             $logos = array_merge($fields['logos'], $fields['logos'], $fields['logos'], $fields['logos']);
             ?>
-            <section class="breakout py-12 mb-16 overflow-hidden bg-white">
-                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-12">
+            <section class="breakout py-8 md:py-12 mb-8 md:mb-16 overflow-hidden bg-white">
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-8 md:mb-12">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <h2 class="text-[36px] font-[450] text-ag-black tracking-tight m-0" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
                         <?php if ( $fields['subtitle'] ) : ?>
@@ -394,10 +386,10 @@ function crb_attach_blocks() {
                     </div>
                 </div>
                 
-                <div class="relative w-full overflow-hidden py-12" data-reveal="rise">
+                <div class="relative w-full overflow-hidden py-0 md:py-12" data-reveal="rise">
                     
-                    <!-- Container moves horizontally via JS -->
-                    <div class="flex w-max items-center js-scroll-marquee will-change-transform">
+                    <!-- Desktop: Container moves horizontally via JS -->
+                    <div class="hidden md:flex w-max items-center js-scroll-marquee will-change-transform">
                         <?php 
                         foreach ( $logos as $index => $logo ) : 
                             $delay = $index * 0.25;
@@ -410,6 +402,25 @@ function crb_attach_blocks() {
                                 <img src="<?php echo esc_url($logo['image']); ?>" alt="<?php echo esc_attr($logo['name']); ?>" class="h-7 object-contain grayscale opacity-70 group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-300" />
                             <?php else : ?>
                                 <span class="text-[15px] font-[450] text-ag-black">
+                                    <?php echo esc_html($logo['name']); ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                    
+                    <!-- Mobile: Flex Wrap -->
+                    <div class="flex md:hidden flex-wrap justify-center gap-3">
+                        <?php 
+                        foreach ( $fields['logos'] as $logo ) : 
+                        ?>
+                        <a href="<?php echo esc_url($logo['url'] ?: '#'); ?>" <?php if($logo['url']) echo 'target="_blank" rel="noopener noreferrer"'; ?> 
+                           class="partner-pill flex items-center justify-center px-6 py-3 bg-[#F9F9FC] border border-[rgba(33,34,38,0.06)] rounded-full" 
+                           title="<?php echo esc_attr($logo['name']); ?>">
+                            <?php if ( $logo['image'] ) : ?>
+                                <img src="<?php echo esc_url($logo['image']); ?>" alt="<?php echo esc_attr($logo['name']); ?>" class="h-6 object-contain grayscale opacity-70" />
+                            <?php else : ?>
+                                <span class="text-[14px] font-[450] text-ag-black">
                                     <?php echo esc_html($logo['name']); ?>
                                 </span>
                             <?php endif; ?>
@@ -455,7 +466,7 @@ function crb_attach_blocks() {
                 ));
             }
             ?>
-            <section class="mb-24 md:mb-32">
+            <section class="mb-12 md:mb-32">
                 <div class="flex items-end justify-between mb-3">
                     <h2 class="text-2xl md:text-3xl font-black tracking-tight text-ag-black" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
                     <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
@@ -465,7 +476,7 @@ function crb_attach_blocks() {
                     </a>
                     <?php endif; ?>
                 </div>
-                <span class="section-line mb-10" data-reveal="line"></span>
+                <span class="section-line mb-6 md:mb-10" data-reveal="line"></span>
 
                 <div class="grid grid-cols-1 md:grid-cols-3">
                     <?php 
@@ -506,13 +517,13 @@ function crb_attach_blocks() {
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
             ?>
-            <div class="max-w-5xl mx-auto my-12">
+            <div class="max-w-5xl mx-auto my-8 md:my-12">
                 <div class="flex flex-col md:flex-row gap-12 lg:gap-20 items-start">
                     <div class="flex-1">
                         <h1 class="text-4xl md:text-5xl font-black text-ag-black mb-6 tracking-tight" data-reveal="letters">
                             <?php echo esc_html( $fields['heading'] ); ?>
                         </h1>
-                        <span class="section-line mb-8" data-reveal="line"></span>
+                        <span class="section-line mb-5 md:mb-8" data-reveal="line"></span>
                         <p class="text-gray-500 text-xl font-medium leading-relaxed mb-5" data-reveal="rise">
                             <?php echo esc_html( $fields['subheading'] ); ?>
                         </p>
@@ -550,9 +561,9 @@ function crb_attach_blocks() {
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
             ?>
-            <section class="split-promo-block breakout relative py-20 lg:py-32 overflow-hidden bg-white">
+            <section class="split-promo-block breakout relative py-12 md:py-20 lg:py-32 overflow-hidden bg-white border-y border-[rgba(33,34,38,0.05)]">
                 <div class="split-promo-canvas absolute inset-0 z-0 pointer-events-none"></div>
-                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 relative z-10 flex flex-col md:flex-row min-h-[500px] md:min-h-[600px] gap-8">
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 relative z-10 flex flex-col md:flex-row min-h-[400px] md:min-h-[600px] gap-4 md:gap-8">
                     <!-- Left Side -->
                     <div class="flex-1 flex flex-col items-center justify-center text-center split-promo-left group relative">
                         <span class="text-[11px] font-semibold px-3 py-1.5 border border-gray-100 rounded-full mb-6 bg-white/50 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.03)] uppercase tracking-wider text-gray-500">
@@ -598,6 +609,118 @@ function crb_attach_blocks() {
                             </div>
                         </a>
                         <?php endif; ?>
+                    </div>
+                </div>
+            </section>
+            <?php
+        } );
+
+    // 7.7 Latest Blogs
+    Block::make( __( 'Latest Blogs' ) )
+        ->set_category( 'shashkevych-blocks' )
+        ->add_fields( array(
+            Field::make( 'text', 'title', __( 'Section Title' ) )->set_default_value('Latest Blogs'),
+            Field::make( 'text', 'link_text', __( 'View blog Link Text' ) )->set_default_value('View blog'),
+            Field::make( 'text', 'link_url', __( 'View blog URL' ) ),
+        ) )
+        ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
+            $posts_query = new WP_Query(array(
+                'post_type' => 'post',
+                'posts_per_page' => 8,
+                'orderby' => 'date',
+                'order' => 'DESC'
+            ));
+            
+            $raw_posts = array();
+            if ( $posts_query->have_posts() ) {
+                while ( $posts_query->have_posts() ) {
+                    $posts_query->the_post();
+                    $raw_posts[] = array(
+                        'id' => get_the_ID(),
+                        'title' => get_the_title(),
+                        'link' => get_the_permalink(),
+                        'excerpt' => get_the_excerpt(),
+                        'date' => get_the_date('M j, Y'),
+                        'category' => get_the_category() ? get_the_category()[0]->name : '',
+                        'thumbnail' => get_the_post_thumbnail_url(get_the_ID(), 'large')
+                    );
+                }
+                wp_reset_postdata();
+            }
+
+            if (empty($raw_posts)) return;
+
+            $slider_posts = $raw_posts;
+            while(count($slider_posts) < 8) {
+                $slider_posts = array_merge($slider_posts, $raw_posts);
+            }
+            $slider_posts = array_slice($slider_posts, 0, 8);
+            ?>
+            <section class="breakout py-8 md:py-12 mb-8 md:mb-16 overflow-hidden bg-white relative">
+                <div class="max-w-[1400px] mx-auto px-4 lg:px-6 mb-8 md:mb-12">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <h2 class="text-[36px] font-[450] text-ag-black tracking-tight m-0" data-reveal="letters"><?php echo esc_html($fields['title']); ?></h2>
+                        <?php if ( $fields['link_text'] && $fields['link_url'] ) : ?>
+                        <a href="<?php echo esc_url($fields['link_url']); ?>" class="btn-animated btn-animated-ghost hidden md:inline-flex" data-reveal="rise" data-delay="1">
+                            <div class="btn-animated-bg"></div>
+                            <div class="btn-animated-content">
+                                <div class="btn-animated-text">
+                                    <span><?php echo esc_html($fields['link_text']); ?></span>
+                                    <span><?php echo esc_html($fields['link_text']); ?></span>
+                                </div>
+                                <div class="btn-animated-icon">
+                                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" class="opacity-80"><path d="M1 7H13M8 2L13 7L8 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" class="opacity-80"><path d="M1 7H13M8 2L13 7L8 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </div>
+                            </div>
+                        </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="relative max-w-[1400px] mx-auto px-4 lg:px-6" data-reveal="rise">
+                    <div class="swiper blogs-slider w-full overflow-visible">
+                        <div class="swiper-wrapper">
+                            <?php foreach($slider_posts as $post) : ?>
+                            <div class="swiper-slide cursor-pointer group !h-auto">
+                                <a href="<?php echo esc_url($post['link']); ?>" class="block h-full flex flex-col">
+                                    <div class="w-full aspect-square bg-[#111111] rounded-[20px] overflow-hidden mb-6 flex items-center justify-center relative shadow-sm transition-transform duration-500 group-hover:scale-[1.02]">
+                                        <?php if($post['thumbnail']) : ?>
+                                            <img src="<?php echo esc_url($post['thumbnail']); ?>" alt="<?php echo esc_attr($post['title']); ?>" class="w-full h-full object-cover">
+                                        <?php else : ?>
+                                            <span class="text-white text-6xl font-bold opacity-80"><?php echo esc_html(mb_substr($post['title'], 0, 1)); ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h3 class="text-[16px] font-[450] tracking-tight text-ag-black mb-2 leading-snug group-hover:text-ag-accent transition-colors duration-300">
+                                        <?php echo esc_html($post['title']); ?>
+                                    </h3>
+                                    <div class="text-[16px] font-[350] text-gray-500 leading-relaxed line-clamp-2 md:line-clamp-3 mb-8">
+                                        <?php echo wp_trim_words( $post['excerpt'], 20 ); ?>
+                                    </div>
+                                    <div class="project-link btn-animated btn-animated-ghost self-start mt-auto">
+                                        <div class="btn-animated-bg"></div>
+                                        <div class="btn-animated-content">
+                                            <div class="btn-animated-text">
+                                                <span><?php echo theme_t('Читати блог', 'Read blog', 'Читать блог'); ?></span>
+                                                <span><?php echo theme_t('Читати блог', 'Read blog', 'Читать блог'); ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 md:mt-10 flex justify-center md:justify-start">
+                        <div class="inline-flex items-center gap-1 bg-[#F8F9FC] p-1 rounded-full">
+                            <button class="blogs-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            </button>
+                            <button class="blogs-next custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>

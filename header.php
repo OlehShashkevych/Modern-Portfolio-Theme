@@ -40,7 +40,7 @@
             if ($langs) {
                 foreach ($langs as $lang) {
                     $active_class = $lang['current_lang'] ? 'text-ag-accent' : 'text-gray-400';
-                    echo '<a href="' . esc_url($lang['url']) . '" class="text-sm font-bold ' . $active_class . '">' . esc_html(strtoupper($lang['slug'])) . '</a>';
+                    echo '<a href="' . esc_url($lang['url']) . '" class="mobile-menu-lang-link text-sm font-bold ' . $active_class . '" style="font-size: 1rem; transform: translateY(30px); opacity: 0; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;">' . esc_html(strtoupper($lang['slug'])) . '</a>';
                 }
             }
         }

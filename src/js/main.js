@@ -296,6 +296,25 @@ import { Navigation } from 'swiper/modules';
       if (window.innerWidth >= 768) toggleMenu(false);
     });
 
+    // ── Blogs Slider ──
+    const blogsSliderEl = document.querySelector('.blogs-slider');
+    if (blogsSliderEl) {
+      new Swiper(blogsSliderEl, {
+        modules: [Navigation],
+        slidesPerView: 1.2,
+        spaceBetween: 24,
+        navigation: {
+          nextEl: '.blogs-next',
+          prevEl: '.blogs-prev',
+        },
+        breakpoints: {
+          768: { slidesPerView: 2.2, spaceBetween: 24 },
+          1024: { slidesPerView: 3.2, spaceBetween: 32 },
+          1280: { slidesPerView: 4.4, spaceBetween: 32 }
+        }
+      });
+    }
+
     // ── Scroll-reveal + Letter-split ──
     document.documentElement.classList.add('js-ready');
 
@@ -350,8 +369,60 @@ import { Navigation } from 'swiper/modules';
     }
 
     // ── Three.js Particle Background ──
-    function initParticles() {
-      const container = document.getElementById('hero-particles') || document.getElementById('canvas-container');
+    function getEnvelopeData(count) {
+         const data = new Float32Array(count * 4);
+         const thickness = 0.08;
+         
+         for(let i=0; i<count; i++) {
+             data[i*4] = Math.random(); // t
+             data[i*4+1] = (Math.random() - 0.5) * thickness; // dx
+             data[i*4+2] = (Math.random() - 0.5) * thickness; // dy
+             data[i*4+3] = (Math.random() - 0.5) * thickness * 2; // dz
+         }
+         return data;
+    }
+    
+    function getEnvelopePos(t, w, h) {
+         const lenTop = 2*w;
+         const lenRight = 2*h;
+         const lenBottom = 2*w;
+         const lenLeft = 2*h;
+         const lenDiag = Math.sqrt(w*w + h*h);
+         
+         const totalLen = lenTop + lenRight + lenBottom + lenLeft + lenDiag * 2;
+         let r = t * totalLen;
+         let x=0, y=0;
+         if(r < lenTop) {
+             x = -w + (r/lenTop)*2*w;
+             y = h;
+         } else if(r < lenTop + lenRight) {
+             r -= lenTop;
+             x = w;
+             y = h - (r/lenRight)*2*h;
+         } else if(r < lenTop + lenRight + lenBottom) {
+             r -= (lenTop + lenRight);
+             x = w - (r/lenBottom)*2*w;
+             y = -h;
+         } else if(r < lenTop + lenRight + lenBottom + lenLeft) {
+             r -= (lenTop + lenRight + lenBottom);
+             x = -w;
+             y = -h + (r/lenLeft)*2*h;
+         } else if(r < lenTop + lenRight + lenBottom + lenLeft + lenDiag) {
+             r -= (lenTop + lenRight + lenBottom + lenLeft);
+             let dt = r/lenDiag;
+             x = -w + dt*w;
+             y = h - dt*h;
+         } else {
+             r -= (lenTop + lenRight + lenBottom + lenLeft + lenDiag);
+             let dt = r/lenDiag;
+             x = 0 + dt*w; // Reversed to start at center
+             y = 0 + dt*h;
+         }
+         return {x, y};
+    }
+
+    function initParticles(containerId, isPurpleOnly = false) {
+      const container = document.getElementById(containerId);
       if (!container) return;
 
       const scene = new THREE.Scene();
@@ -384,8 +455,19 @@ import { Navigation } from 'swiper/modules';
       
       const geometries = [];
       const originalPosArrays = [];
+      const currentBaseArrays = [];
       const currentRepelArrays = [];
       const particlesMeshes = [];
+      const envelopeTargetsGroups = [];
+
+      let isEnvelopeHover = false;
+      if (containerId === 'footer-particles') {
+          const btn = document.querySelector('.js-footer-email-btn');
+          if (btn) {
+              btn.addEventListener('mouseenter', () => { if (window.innerWidth > 768) isEnvelopeHover = true; });
+              btn.addEventListener('mouseleave', () => isEnvelopeHover = false);
+          }
+      }
 
       const materials = [
         new THREE.PointsMaterial({ size: 0.02, map: circleTexture, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }),
@@ -435,10 +517,22 @@ import { Navigation } from 'swiper/modules';
             repelArray[i2+1] = 0;
           }
 
+          const curBaseArray = new Float32Array(counts[g] * 3);
+          for(let i=0; i<counts[g]; i++) {
+             curBaseArray[i*3] = origPosArray[i*3];
+             curBaseArray[i*3+1] = origPosArray[i*3+1];
+             curBaseArray[i*3+2] = origPosArray[i*3+2];
+          }
+
           geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
           geometries.push(geometry);
           originalPosArrays.push(origPosArray);
+          currentBaseArrays.push(curBaseArray);
           currentRepelArrays.push(repelArray);
+          
+          if (containerId === 'footer-particles') {
+              envelopeTargetsGroups.push(getEnvelopeData(counts[g]));
+          }
 
           const mesh = new THREE.Points(geometry, materials[g]);
           scene.add(mesh);
@@ -467,7 +561,9 @@ import { Navigation } from 'swiper/modules';
 
       const clock = new THREE.Clock();
 
-      const colors = [
+      const colors = isPurpleOnly ? [
+          new THREE.Color('#9b51e0')
+      ] : [
           new THREE.Color('#4a90e2'),
           new THREE.Color('#9b51e0'),
           new THREE.Color('#ff6b6b'),
@@ -496,6 +592,7 @@ import { Navigation } from 'swiper/modules';
             // 3. Wave effect & Mouse repel on individual particles
             const positions = geometries[g].attributes.position.array;
             const orig = originalPosArrays[g];
+            const curBase = currentBaseArrays[g];
             const curRepel = currentRepelArrays[g];
             const cCount = counts[g];
             
@@ -505,9 +602,35 @@ import { Navigation } from 'swiper/modules';
             for(let i = 0; i < cCount; i++) {
                 const i3 = i * 3;
                 const i2 = i * 2;
-                const ox = orig[i3];
-                const oy = orig[i3+1];
-                const oz = orig[i3+2];
+                
+                let targetXPos = orig[i3];
+                let targetYPos = orig[i3+1];
+                let targetZPos = orig[i3+2];
+
+                if (isEnvelopeHover) {
+                    const envData = envelopeTargetsGroups[g];
+                    const t_init = envData[i*4];
+                    const dx = envData[i*4+1];
+                    const dy = envData[i*4+2];
+                    const dz = envData[i*4+3];
+                    
+                    // Freeze current_t to its initial value so they don't traverse the path
+                    let current_t = t_init;
+                    
+                    const envPos = getEnvelopePos(current_t, 1.6, 1.0);
+                    
+                    targetXPos = envPos.x + dx + (widthWorld * 0.25);
+                    targetYPos = envPos.y + dy;
+                    targetZPos = dz;
+                }
+
+                curBase[i3] += (targetXPos - curBase[i3]) * 0.05;
+                curBase[i3+1] += (targetYPos - curBase[i3+1]) * 0.05;
+                curBase[i3+2] += (targetZPos - curBase[i3+2]) * 0.05;
+
+                const ox = curBase[i3];
+                const oy = curBase[i3+1];
+                const oz = curBase[i3+2];
                 
                 const dx = ox - targetX;
                 const dy = oy - targetY;
@@ -527,10 +650,18 @@ import { Navigation } from 'swiper/modules';
                 curRepel[i2+1] += (targetRepelY - curRepel[i2+1]) * 0.02;
                 
                 // Wave: modify Z and slightly X/Y, plus current repel state
-                // Slower multipliers for smoother motion
-                positions[i3+2] = oz + Math.sin(elapsedTime * 0.8 + ox) * 0.2 + Math.cos(elapsedTime * 0.6 + oy) * 0.2;
-                positions[i3] = ox + curRepel[i2] + Math.sin(elapsedTime * 0.4 + oy) * 0.1;
-                positions[i3+1] = oy + curRepel[i2+1] + Math.cos(elapsedTime * 0.5 + ox) * 0.1;
+                let waveAmp = isEnvelopeHover ? 0.08 : 0.1;
+                let waveZAmp = isEnvelopeHover ? 0.12 : 0.2;
+                
+                // Increase frequency for the twitchy effect
+                let freqZ1 = isEnvelopeHover ? 1.5 : 0.8;
+                let freqZ2 = isEnvelopeHover ? 1.2 : 0.6;
+                let freqX = isEnvelopeHover ? 2.0 : 0.4;
+                let freqY = isEnvelopeHover ? 1.8 : 0.5;
+
+                positions[i3+2] = oz + Math.sin(elapsedTime * freqZ1 + ox) * waveZAmp + Math.cos(elapsedTime * freqZ2 + oy) * waveZAmp;
+                positions[i3] = ox + curRepel[i2] + Math.sin(elapsedTime * freqX + oy) * waveAmp;
+                positions[i3+1] = oy + curRepel[i2+1] + Math.cos(elapsedTime * freqY + ox) * waveAmp;
             }
             geometries[g].attributes.position.needsUpdate = true;
         }
@@ -774,12 +905,33 @@ import { Navigation } from 'swiper/modules';
       });
     }
 
+    // ── Footer CTA Scroll Animation ──
+    function initFooterAnimation() {
+      const ctaBlock = document.querySelector('.js-footer-cta');
+      if (!ctaBlock) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            ctaBlock.classList.remove('scale-[0.95]');
+            ctaBlock.classList.add('scale-100');
+          }
+        });
+      }, { threshold: 0.2 });
+
+      observer.observe(ctaBlock);
+    }
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        initParticles();
+        initParticles('hero-particles', false);
+        initParticles('footer-particles', true);
         initSplitPromoParticles();
+        initFooterAnimation();
       });
     } else {
-      initParticles();
+      initParticles('hero-particles', false);
+      initParticles('footer-particles', true);
       initSplitPromoParticles();
+      initFooterAnimation();
     }
