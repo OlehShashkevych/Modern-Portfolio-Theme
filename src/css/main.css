@@ -822,3 +822,76 @@
     opacity: 1 !important;
   }
 }
+
+/* ══════════════════════════════════════
+   GUTENBERG DEFAULT BLOCKS STYLING
+══════════════════════════════════════ */
+/* Scope width only for top-level blocks inside main to keep it readable, unless inside a custom block container */
+main > .wp-block-heading,
+main > .wp-block-paragraph,
+main > .wp-block-list {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wp-block-heading {
+  font-weight: 450;
+  color: var(--black);
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+.wp-block-heading:first-child {
+  margin-top: 0;
+}
+h1.wp-block-heading { font-size: 2.5rem; }
+h2.wp-block-heading { font-size: 2rem; }
+h3.wp-block-heading { font-size: 1.5rem; }
+h4.wp-block-heading { font-size: 1.25rem; }
+
+@media (min-width: 768px) {
+  h1.wp-block-heading { font-size: 3.5rem; }
+  h2.wp-block-heading { font-size: 2.5rem; }
+  h3.wp-block-heading { font-size: 1.75rem; }
+}
+
+.wp-block-paragraph {
+  color: #6b7280;
+  line-height: 1.8;
+  margin-bottom: 1.5em;
+  font-size: 1rem;
+}
+.wp-block-paragraph strong {
+  color: var(--black);
+  font-weight: 450;
+}
+
+.wp-block-list {
+  color: #6b7280;
+  line-height: 1.8;
+  margin-bottom: 1.5em;
+  padding-left: 1.5rem;
+  list-style-type: disc;
+  font-size: 1rem;
+}
+.wp-block-list li {
+  margin-bottom: 0.5em;
+}
+.wp-block-list strong {
+  color: var(--black);
+  font-weight: 450;
+}
+
+.wp-block-paragraph a,
+.wp-block-list a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+.wp-block-paragraph a:hover,
+.wp-block-list a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}

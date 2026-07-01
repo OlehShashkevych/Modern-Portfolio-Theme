@@ -89,7 +89,7 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
         <?php endif; ?>
 
         <!-- Content -->
-        <article class="prose prose-lg md:prose-xl max-w-none prose-a:text-ag-accent prose-a:no-underline hover:prose-a:underline" data-reveal="rise">
+        <article class="prose prose-lg md:prose-xl max-w-none prose-headings:font-[450] prose-strong:font-[450] prose-a:text-ag-accent prose-a:no-underline hover:prose-a:underline" data-reveal="rise">
           <?php the_content(); ?>
         </article>
     </div>
