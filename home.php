@@ -19,10 +19,10 @@ $description = theme_t(
     <div id="hero-particles" class="absolute inset-0 z-0 pointer-events-none"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto px-6">
-        <h1 class="text-4xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.1] md:leading-[1.2] mb-6 tracking-tight" data-reveal="letters">
+        <h1 class="text-4xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.1] md:leading-[1.2] mb-6 tracking-tight">
             <?php echo esc_html( $title ); ?>
         </h1>
-        <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto" data-reveal="rise">
+        <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-8">
             <?php echo esc_html( $description ); ?>
         </p>
     </div>
