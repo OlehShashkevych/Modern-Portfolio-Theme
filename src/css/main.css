@@ -1,3 +1,4 @@
+@import "@fontsource-variable/inter";
 @import 'swiper/css';
 @tailwind base;
 @tailwind components;
@@ -564,7 +565,7 @@
     font-weight: 900;
     letter-spacing: -0.02em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
     user-select: none;
   }
   #page-curtain-logo .dot {
@@ -614,13 +615,16 @@
     padding: 4rem 2rem 3rem;
     pointer-events: none;
     opacity: 0;
+    visibility: hidden;
     clip-path: circle(0px at calc(100% - 40px) 30px);
-    transition: clip-path 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.4s ease;
+    transition: clip-path 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.4s ease, visibility 0s 0.7s;
   }
   .mobile-menu.open {
     pointer-events: auto;
     opacity: 1;
+    visibility: visible;
     clip-path: circle(150% at calc(100% - 40px) 30px);
+    transition: clip-path 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.4s ease, visibility 0s 0s;
   }
   .mobile-menu a {
     font-size: clamp(1.8rem, 8vw, 3rem);

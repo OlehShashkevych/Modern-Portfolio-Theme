@@ -70,10 +70,10 @@ import { Navigation } from 'swiper/modules';
           return;
       }
       curtain.classList.remove('enter-from-top', 'covered');
-      curtain.getBoundingClientRect(); // Force reflow
-      curtain.classList.add('leave');
-      
-      setTimeout(startReveals, 300); // Start reveals slightly after curtain starts leaving
+      requestAnimationFrame(() => {
+        curtain.classList.add('leave');
+        setTimeout(startReveals, 300); // Start reveals slightly after curtain starts leaving
+      });
     }
 
     function initCurtain() {
@@ -120,8 +120,9 @@ import { Navigation } from 'swiper/modules';
 
       curtain.classList.remove('leave');
       curtain.classList.add('enter-from-top');
-      curtain.getBoundingClientRect(); // Force reflow
-      curtain.classList.add('covered');
+      requestAnimationFrame(() => {
+        curtain.classList.add('covered');
+      });
 
       setTimeout(() => {
         window.location.href = href;
@@ -249,13 +250,15 @@ import { Navigation } from 'swiper/modules';
         animationFrameId = requestAnimationFrame(updateBtnPosition);
       };
       
+      let cachedRect = null;
+      
       wrapper.addEventListener('mouseenter', (e) => {
         isHovering = true;
         
         // Initialize current position to mouse entry point to avoid flying in from 0,0
-        const rect = wrapper.getBoundingClientRect();
-        currentX = mouseX = e.clientX - rect.left;
-        currentY = mouseY = e.clientY - rect.top;
+        cachedRect = wrapper.getBoundingClientRect();
+        currentX = mouseX = e.clientX - cachedRect.left;
+        currentY = mouseY = e.clientY - cachedRect.top;
         
         btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
         
@@ -266,13 +269,14 @@ import { Navigation } from 'swiper/modules';
       });
       
       wrapper.addEventListener('mousemove', (e) => {
-        const rect = wrapper.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
+        if (!cachedRect) return;
+        mouseX = e.clientX - cachedRect.left;
+        mouseY = e.clientY - cachedRect.top;
       });
       
       wrapper.addEventListener('mouseleave', () => {
         isHovering = false;
+        cachedRect = null;
         cancelAnimationFrame(animationFrameId);
         
         btn.classList.remove('is-active');
@@ -465,7 +469,7 @@ import { Navigation } from 'swiper/modules';
       const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
       
       renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       container.appendChild(renderer.domElement);
 
       function createCircleTexture() {
@@ -734,7 +738,7 @@ import { Navigation } from 'swiper/modules';
       const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
       
       renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       container.appendChild(renderer.domElement);
 
       const particlesCount = 2000;
@@ -976,16 +980,32 @@ import { Navigation } from 'swiper/modules';
       observer.observe(ctaBlock);
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        initParticles('hero-particles', false);
-        initParticles('footer-particles', true);
-        initSplitPromoParticles();
-        initFooterAnimation();
-      });
-    } else {
+    const initLazy = () => {
       initParticles('hero-particles', false);
-      initParticles('footer-particles', true);
-      initSplitPromoParticles();
       initFooterAnimation();
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (entry.target.id === 'footer-particles') {
+              initParticles('footer-particles', true);
+            } else if (entry.target.classList.contains('split-promo-canvas')) {
+              initSplitPromoParticles();
+            }
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '200px' });
+
+      const footerParticles = document.getElementById('footer-particles');
+      if (footerParticles) observer.observe(footerParticles);
+
+      const promoCanvas = document.querySelector('.split-promo-canvas');
+      if (promoCanvas) observer.observe(promoCanvas);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLazy);
+    } else {
+      initLazy();
     }

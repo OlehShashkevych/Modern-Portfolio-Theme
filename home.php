@@ -22,7 +22,7 @@ $description = theme_t(
         <h1 class="text-4xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.1] md:leading-[1.2] mb-6 tracking-tight" data-reveal="letters">
             <?php echo esc_html( $title ); ?>
         </h1>
-        <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto" data-reveal="rise" data-delay="1">
+        <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto" data-reveal="rise">
             <?php echo esc_html( $description ); ?>
         </p>
     </div>

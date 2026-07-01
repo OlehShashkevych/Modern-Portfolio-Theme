@@ -23,7 +23,7 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
         </h1>
 
         <!-- Meta row -->
-        <div class="flex items-center justify-center gap-4 text-sm font-semibold tracking-wider uppercase text-gray-500" data-reveal="rise" data-delay="1">
+        <div class="flex items-center justify-center gap-4 text-sm font-semibold tracking-wider uppercase text-gray-500" data-reveal="rise">
           <time datetime="<?php echo get_the_date('c'); ?>"><?php echo get_the_date(); ?></time>
         </div>
     </div>

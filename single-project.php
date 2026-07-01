@@ -28,7 +28,7 @@ $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'full');
         
         <!-- Summary -->
         <?php if ( has_excerpt() ) : ?>
-        <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise" data-delay="1">
+        <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise">
           <?php echo get_the_excerpt(); ?>
         </p>
         <?php endif; ?>

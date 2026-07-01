@@ -37,7 +37,7 @@ function shashkevych_enqueue_scripts() {
     $js_ver = file_exists( get_template_directory() . '/dist/main.js' ) ? filemtime( get_template_directory() . '/dist/main.js' ) : '1.0.0';
 
     wp_enqueue_style( 'shashkevych-style', get_template_directory_uri() . '/dist/style.css', array(), $css_ver );
-    wp_enqueue_script( 'shashkevych-script', get_template_directory_uri() . '/dist/main.js', array(), $js_ver, true );
+    wp_enqueue_script( 'shashkevych-script', get_template_directory_uri() . '/dist/main.js', array(), $js_ver, array( 'strategy' => 'defer', 'in_footer' => true ) );
 }
 add_action( 'wp_enqueue_scripts', 'shashkevych_enqueue_scripts' );
 
@@ -175,7 +175,7 @@ function crb_attach_blocks() {
                     <h1 class="text-4xl md:text-6xl lg:text-[72px] font-[450] text-ag-black leading-[1.1] md:leading-[1.2] mb-6 tracking-tight" data-reveal="letters">
                         <?php echo esc_html( $fields['heading'] ); ?>
                     </h1>
-                    <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise" data-delay="1">
+                    <p class="text-[16px] font-normal text-gray-500 leading-relaxed max-w-2xl mx-auto mb-10" data-reveal="rise">
                         <?php echo esc_html( $fields['subheading'] ); ?>
                     </p>
                     <div class="flex flex-wrap items-center justify-center gap-4">
@@ -342,10 +342,10 @@ function crb_attach_blocks() {
 
                     <!-- Custom Arrows placed horizontally aligned with the right edge of the slide area (w-[900px] typically) on desktop -->
                     <div class="project-slider-arrows flex items-center justify-center gap-1 bg-[#F8F9FC] p-1 rounded-full w-max mx-auto md:mx-0 relative md:absolute z-10 mt-6 md:mt-0">
-                        <button class="swiper-btn-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                        <button aria-label="Previous" class="swiper-btn-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
-                        <button class="swiper-btn-next custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                        <button aria-label="Next" class="swiper-btn-next custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
                     </div>
@@ -708,10 +708,10 @@ function crb_attach_blocks() {
                     
                     <div class="mt-8 md:mt-10 flex justify-center md:justify-start">
                         <div class="inline-flex items-center gap-1 bg-[#F8F9FC] p-1 rounded-full">
-                            <button class="blogs-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                            <button aria-label="Previous" class="blogs-prev custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                             </button>
-                            <button class="blogs-next custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
+                            <button aria-label="Next" class="blogs-next custom-arrow-btn w-9 h-9 rounded-full bg-transparent flex items-center justify-center transition-colors">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </button>
                         </div>

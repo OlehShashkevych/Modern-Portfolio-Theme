@@ -5,7 +5,7 @@
 <footer class="relative z-30 flex flex-col items-center pb-6 bg-white w-full">
 
     <!-- Top Block: Black Canvas -->
-    <div class="footer-cta-block relative w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] bg-[#050505] text-white rounded-[2rem] overflow-hidden min-h-[calc(100svh-2rem)] md:min-h-[calc(100svh-3rem)] flex items-center transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] scale-[0.95] js-footer-cta">
+    <div id="contact" class="footer-cta-block relative w-[calc(100%-2rem)] md:w-[calc(100%-3rem)] bg-[#050505] text-white rounded-[2rem] overflow-hidden min-h-[calc(100svh-2rem)] md:min-h-[calc(100svh-3rem)] flex items-center transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] scale-[0.95] js-footer-cta">
         <div id="footer-particles" class="absolute inset-0 z-0 pointer-events-none"></div>
         <div class="relative z-10 w-full max-w-[1400px] mx-auto px-6 lg:px-10 pointer-events-none">
             <div class="max-w-2xl pointer-events-auto">
