@@ -2,7 +2,7 @@
 get_header();
 
 $heading = theme_t(
-    'Проекти', 
+    'Проєкти', 
     'Projects', 
     'Проекты'
 );

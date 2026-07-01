@@ -818,35 +818,54 @@ import { Navigation } from 'swiper/modules';
         });
       }
 
-      const lightningTargets = [];
+      const cameraTargets = [];
       for (let i = 0; i < particlesCount; i++) {
-        // 2D Lightning Bolt
+        // 2D Camera [ . ]
         const part = Math.random();
         const t = Math.random();
         let x, y;
         
-        if (part > 0.5) {
-          // Top stroke: from top right down to center left
-          const baseX = 0.4 + t * (-0.2 - 0.4);
-          const baseY = 1.2 + t * (0.0 - 1.2);
-          const w = (Math.random() - 0.5) * 0.6;
-          x = baseX + w;
-          y = baseY;
+        if (part < 0.3) {
+          // Center circle
+          const angle = Math.random() * Math.PI * 2;
+          const r = 0.3 + (Math.random() - 0.5) * 0.1;
+          x = Math.cos(angle) * r;
+          y = Math.sin(angle) * r;
+        } else if (part < 0.45) {
+          // Left vertical bracket line
+          x = -1.0;
+          y = -1.0 + t * 2.0;
+        } else if (part < 0.525) {
+          // Left top bracket tip
+          x = -1.0 + t * 0.5;
+          y = 1.0;
+        } else if (part < 0.6) {
+          // Left bottom bracket tip
+          x = -1.0 + t * 0.5;
+          y = -1.0;
+        } else if (part < 0.75) {
+          // Right vertical bracket line
+          x = 1.0;
+          y = -1.0 + t * 2.0;
+        } else if (part < 0.825) {
+          // Right top bracket tip
+          x = 1.0 - t * 0.5;
+          y = 1.0;
         } else {
-          // Bottom stroke: from center right down to bottom left
-          const baseX = 0.2 + t * (-0.4 - 0.2);
-          const baseY = 0.0 + t * (-1.2 - 0.0);
-          const taper = 1.0 - Math.pow(t, 0.8);
-          const w = (Math.random() - 0.5) * 0.6 * taper;
-          x = baseX + w;
-          y = baseY;
+          // Right bottom bracket tip
+          x = 1.0 - t * 0.5;
+          y = -1.0;
         }
         
         // Minor scatter
         x += (Math.random() - 0.5) * 0.05;
         y += (Math.random() - 0.5) * 0.05;
 
-        lightningTargets.push({ x, y });
+        // Scale to fit visually
+        x *= 0.8;
+        y *= 0.8;
+
+        cameraTargets.push({ x, y });
       }
 
       let activeState = 'none'; // 'none', 'left', 'right'
@@ -899,10 +918,10 @@ import { Navigation } from 'swiper/modules';
             tz = 0;
             tc = colorLeft;
           } else if (activeState === 'right') {
-            // All particles form a non-rotating Lightning target
-            const lt = lightningTargets[i];
-            tx = lt.x + Math.sin(shapeRotation * 2 + i) * 0.05 + centerXRight;
-            ty = lt.y + Math.cos(shapeRotation * 2 + i) * 0.05;
+            // All particles form a non-rotating Camera target [ . ]
+            const ct = cameraTargets[i];
+            tx = ct.x + Math.sin(shapeRotation * 2 + i) * 0.05 + centerXRight;
+            ty = ct.y + Math.cos(shapeRotation * 2 + i) * 0.05;
             tz = 0;
             tc = colorRight;
           } else {
