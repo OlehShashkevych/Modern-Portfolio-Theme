@@ -222,71 +222,71 @@ import { Navigation } from 'swiper/modules';
           }
         }
       });
-      
-      // Custom Cursor Logic with micro-delay (lerp)
-      const imageWrappers = document.querySelectorAll('.project-image-wrapper');
-      
-      imageWrappers.forEach(wrapper => {
-        const btn = wrapper.querySelector('.watch-case-btn');
-        if (!btn) return;
-        
-        let mouseX = 0, mouseY = 0;
-        let currentX = 0, currentY = 0;
-        let isHovering = false;
-        let animationFrameId;
+          }
 
-        const lerp = (start, end, factor) => start + (end - start) * factor;
+    // Custom Cursor Logic with micro-delay (lerp) - Global for all project-image-wrappers
+    const imageWrappers = document.querySelectorAll('.project-image-wrapper');
+    
+    imageWrappers.forEach(wrapper => {
+      const btn = wrapper.querySelector('.watch-case-btn');
+      if (!btn) return;
+      
+      let mouseX = 0, mouseY = 0;
+      let currentX = 0, currentY = 0;
+      let isHovering = false;
+      let animationFrameId;
 
-        const updateBtnPosition = () => {
-          if (!isHovering) return;
-          
-          currentX = lerp(currentX, mouseX, 0.15); // Adjust factor for delay amount (lower = more delay)
-          currentY = lerp(currentY, mouseY, 0.15);
-          
-          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(1)`;
-          
-          animationFrameId = requestAnimationFrame(updateBtnPosition);
-        };
+      const lerp = (start, end, factor) => start + (end - start) * factor;
+
+      const updateBtnPosition = () => {
+        if (!isHovering) return;
         
-        wrapper.addEventListener('mouseenter', (e) => {
-          isHovering = true;
-          
-          // Initialize current position to mouse entry point to avoid flying in from 0,0
-          const rect = wrapper.getBoundingClientRect();
-          currentX = mouseX = e.clientX - rect.left;
-          currentY = mouseY = e.clientY - rect.top;
-          
-          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
-          
-          btn.classList.remove('is-leaving');
-          btn.classList.add('is-active');
-          
-          updateBtnPosition();
-        });
+        currentX = lerp(currentX, mouseX, 0.15); // Adjust factor for delay amount (lower = more delay)
+        currentY = lerp(currentY, mouseY, 0.15);
         
-        wrapper.addEventListener('mousemove', (e) => {
-          const rect = wrapper.getBoundingClientRect();
-          mouseX = e.clientX - rect.left;
-          mouseY = e.clientY - rect.top;
-        });
+        btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(1)`;
         
-        wrapper.addEventListener('mouseleave', () => {
-          isHovering = false;
-          cancelAnimationFrame(animationFrameId);
-          
-          btn.classList.remove('is-active');
-          btn.classList.add('is-leaving');
-          // Scale down at current position
-          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
-        });
+        animationFrameId = requestAnimationFrame(updateBtnPosition);
+      };
+      
+      wrapper.addEventListener('mouseenter', (e) => {
+        isHovering = true;
         
-        // Ensure click on wrapper goes to the link
-        wrapper.addEventListener('click', () => {
-          const url = wrapper.getAttribute('data-project-url');
-          if (url) window.location.href = url;
-        });
+        // Initialize current position to mouse entry point to avoid flying in from 0,0
+        const rect = wrapper.getBoundingClientRect();
+        currentX = mouseX = e.clientX - rect.left;
+        currentY = mouseY = e.clientY - rect.top;
+        
+        btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
+        
+        btn.classList.remove('is-leaving');
+        btn.classList.add('is-active');
+        
+        updateBtnPosition();
       });
-    }
+      
+      wrapper.addEventListener('mousemove', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+      });
+      
+      wrapper.addEventListener('mouseleave', () => {
+        isHovering = false;
+        cancelAnimationFrame(animationFrameId);
+        
+        btn.classList.remove('is-active');
+        btn.classList.add('is-leaving');
+        // Scale down at current position
+        btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(0)`;
+      });
+      
+      // Ensure click on wrapper goes to the link
+      wrapper.addEventListener('click', () => {
+        const url = wrapper.getAttribute('data-project-url');
+        if (url) window.location.href = url;
+      });
+    });
 
     mobileMenu?.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => toggleMenu(false));
@@ -336,6 +336,41 @@ import { Navigation } from 'swiper/modules';
         })
         .join(' '); 
       el.innerHTML = html;
+    });
+
+    document.querySelectorAll('[data-reveal="typewriter"]').forEach((el) => {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+      const textNodes = [];
+      let node;
+      while (node = walker.nextNode()) {
+        if (node.nodeValue.trim().length > 0) {
+          textNodes.push(node);
+        }
+      }
+      
+      let charIndex = 0;
+      textNodes.forEach(textNode => {
+        const text = textNode.nodeValue;
+        const fragment = document.createDocumentFragment();
+
+        const parentLi = textNode.parentElement ? textNode.parentElement.closest('li') : null;
+        if (parentLi && !parentLi.dataset.hasMarkerDelay) {
+           const delay = (charIndex * 0.005).toFixed(3);
+           parentLi.style.setProperty('--marker-delay', `${delay}s`);
+           parentLi.dataset.hasMarkerDelay = "true";
+           parentLi.classList.add('delayed-marker');
+        }
+
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+          const span = document.createElement('span');
+          span.textContent = char;
+          span.className = 'type-char';
+          span.style.animationDelay = `${(charIndex++ * 0.005).toFixed(3)}s`;
+          fragment.appendChild(span);
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      });
     });
 
     function startReveals() {

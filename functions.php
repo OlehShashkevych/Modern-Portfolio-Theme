@@ -508,7 +508,6 @@ function crb_attach_blocks() {
         ->set_category( 'shashkevych-blocks' )
         ->add_fields( array(
             Field::make( 'text', 'heading', __( 'Heading' ) ),
-            Field::make( 'textarea', 'subheading', __( 'Subheading' ) ),
             Field::make( 'image', 'image', __( 'Profile Image' ) )->set_value_type( 'url' ),
         ) )
         ->set_inner_blocks( true )
@@ -517,25 +516,20 @@ function crb_attach_blocks() {
         ) )
         ->set_render_callback( function ( $fields, $attributes, $inner_blocks ) {
             ?>
-            <div class="max-w-5xl mx-auto my-8 md:my-12">
-                <div class="flex flex-col md:flex-row gap-12 lg:gap-20 items-start">
-                    <div class="flex-1">
-                        <h1 class="text-4xl md:text-5xl font-black text-ag-black mb-6 tracking-tight" data-reveal="letters">
+            <div class="max-w-[1400px] mx-auto px-4 lg:px-6 my-6 md:my-24">
+                <div class="flex flex-col md:flex-row gap-8 lg:gap-20 items-stretch">
+                    <div class="flex-1 w-full text-left py-4">
+                        <h1 class="text-[36px] md:text-[48px] font-[450] tracking-tight text-ag-black mb-6" data-reveal="letters">
                             <?php echo esc_html( $fields['heading'] ); ?>
                         </h1>
-                        <span class="section-line mb-5 md:mb-8" data-reveal="line"></span>
-                        <p class="text-gray-500 text-xl font-medium leading-relaxed mb-5" data-reveal="rise">
-                            <?php echo esc_html( $fields['subheading'] ); ?>
-                        </p>
-
-                        <article class="prose prose-lg max-w-none" data-reveal="rise">
+                        <article class="prose prose-lg max-w-none text-[16px] md:text-[18px] text-gray-500 font-[350] leading-relaxed mx-auto md:mx-0" data-reveal="typewriter">
                             <?php echo $inner_blocks; ?>
                         </article>
                     </div>
 
                     <?php if ( $fields['image'] ) : ?>
-                    <div class="w-full md:w-1/3 lg:w-[400px] shrink-0 sticky top-32" data-reveal="zoom">
-                        <img src="<?php echo esc_url( $fields['image'] ); ?>" alt="<?php echo esc_attr( $fields['heading'] ); ?>" class="w-full h-auto object-cover" />
+                    <div class="w-full md:w-[400px] lg:w-[450px] shrink-0 relative rounded-[32px] md:rounded-[40px] overflow-hidden transform transition-transform duration-700 ease-out scale-95 opacity-0 min-h-[300px] shadow-2xl" data-reveal="zoom">
+                        <img src="<?php echo esc_url( $fields['image'] ); ?>" alt="<?php echo esc_attr( $fields['heading'] ); ?>" class="absolute inset-0 w-full h-full object-cover object-center" />
                     </div>
                     <?php endif; ?>
                 </div>

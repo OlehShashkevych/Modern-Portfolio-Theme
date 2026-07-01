@@ -793,7 +793,32 @@
   .lang-dropdown-menu a:hover { color: #0f0f10; background: #f9fafb; }
   .lang-dropdown-menu a.active { color: var(--accent); }
 
-  main > *:last-child {
+  .home main > *:last-child {
     margin-bottom: 0 !important;
+  }
+
+  /* ── Typewriter Animation ── */
+  [data-reveal="typewriter"] .type-char {
+    opacity: 0;
+  }
+  [data-reveal="typewriter"].is-visible .type-char {
+    animation: typeReveal 0.01s forwards;
+  }
+  @keyframes typeReveal {
+    to { opacity: 1; }
+  }
+
+  [data-reveal="typewriter"] li.delayed-marker {
+    opacity: 0;
+  }
+  [data-reveal="typewriter"].is-visible li.delayed-marker {
+    animation: typeReveal 0.01s forwards;
+    animation-delay: var(--marker-delay, 0s);
+  }
+
+  /* ── Zoom Reveal ── */
+  [data-reveal="zoom"].is-visible {
+    transform: scale(1) !important;
+    opacity: 1 !important;
   }
 }
